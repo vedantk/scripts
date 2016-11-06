@@ -1,0 +1,67 @@
+PROMPT="================================================================================
+[%M] %10c (%?) $ "
+
+setopt completealiases
+setopt append_history
+setopt share_history
+setopt histignorealldups
+setopt nobeep
+setopt interactivecomments
+
+zstyle ':completion:*' completer _expand _complete _ignored _approximate
+zstyle ':completion:*' matcher-list '' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' 'r:|[._-:=]=* r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' max-errors 5 numeric
+zstyle ':completion:*' menu select
+zstyle :compinstall filename '/home/vk/.zshrc'
+
+autoload -Uz compinit
+compinit
+HISTFILE=~/.histfile
+HISTSIZE=100000
+SAVEHIST=1000000
+setopt appendhistory autocd extendedglob
+bindkey -v
+
+# ulimit -c unlimited
+
+export EDITOR=vim
+autoload edit-command-line; zle -N edit-command-line
+bindkey -M vicmd v edit-command-line
+
+bindkey '\e[3~' delete-char
+bindkey '^R' history-incremental-search-backward
+
+alias l='ls'
+alias sl='ls'
+
+alias nin='ninja'
+alias ninha='ninja'
+
+alias v='vim'
+alias c='vim'
+
+alias g='git'
+alias gp='git pull'
+alias gu='git push'
+alias gst='git status'
+alias gco='git checkout'
+alias gcp='git cherry-pick'
+
+alias agent='eval $(keychain --eval --agents ssh -Q --quiet id_rsa)'
+
+alias rcbuild='~rc/bin/buildit'
+alias rcbuildit='~rc/bin/buildit'
+
+alias ssh="caffeinate ssh"
+alias tmux="caffeinate tmux -2"
+
+# cd to the llvm build directory, then run lit ...
+alias lit="../utils/lit/lit.py"
+
+export PATH=~/Desktop/llvm/DA/bin:~/int_zorg/tests/clang_qa/utils/:~/scripts:$PATH
+
+PATH="/Users/vk/perl5/bin${PATH+:}${PATH}"; export PATH;
+PERL5LIB="/Users/vk/perl5/lib/perl5${PERL5LIB+:}${PERL5LIB}"; export PERL5LIB;
+PERL_LOCAL_LIB_ROOT="/Users/vk/perl5${PERL_LOCAL_LIB_ROOT+:}${PERL_LOCAL_LIB_ROOT}"; export PERL_LOCAL_LIB_ROOT;
+PERL_MB_OPT="--install_base \"/Users/vk/perl5\""; export PERL_MB_OPT;
+PERL_MM_OPT="INSTALL_BASE=/Users/vk/perl5"; export PERL_MM_OPT;

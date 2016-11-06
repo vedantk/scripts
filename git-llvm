@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ ! -d include/llvm ]; then
+	exit 1
+fi
+
+DIRS=(. tools/clang tools/clang/tools/extra projects/compiler-rt projects/libcxx projects/libcxxabi tools/lldb tools/lld tools/swift)
+
+for dir in ${DIRS[@]}; do
+	if [ -d $dir ]; then
+		echo $dir
+		cd $dir
+		git $* || exit 1
+		cd -
+		echo
+	fi
+done

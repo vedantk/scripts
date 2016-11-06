@@ -1,0 +1,27 @@
+[core]
+	user = Vedant Kumar
+	email = vsk@apple.com
+[user]
+	name = Vedant Kumar
+	email = vsk@apple.com
+[merge]
+	conflictstyle = diff3
+[push]
+	default = simple
+[color]
+	ui = auto
+[log]
+	decorate = true
+	date = local
+[alias]
+	current-branch = !git branch | awk '/\\*/ {print $2}'
+	graph = log --graph --format='%C(auto)%h%d %s %C(green)-- %an, %cr'
+	ff = pull --ff-only
+	co = checkout
+	fixup = commit --amend -C HEAD
+	lg = log --decorate --graph --name-status
+	bvv = branch -vv
+	st = status
+	br = branch
+	hist = "log --format=\"%h    %ai  (%an): %s\""
+	ls = "diff-tree --no-commit-id --name-only -r"

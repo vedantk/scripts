@@ -1,0 +1,5 @@
+Vedant's llvm/swift helper scripts and rc files (tmux/zsh/vim). Please drop me a
+line if you find an issue with anything in here!
+
+Note: mydelta.sh, git-llvm, and bits of find-suspicious-deps.py were stolen from
+aprantl/bogner.

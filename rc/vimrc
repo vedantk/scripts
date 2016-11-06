@@ -1,0 +1,227 @@
+set nocompatible
+set encoding=utf-8
+
+"Set plugin options.
+noremap  <F10> :NERDTreeToggle<CR>
+inoremap <F10> <ESC>:NERDTreeToggle<CR>
+
+let NERDTreeIgnore=['\~$', '.*\.pyc$', 'pip-log\.txt$', '.*.pid', '.*\.o$']
+
+" Set when *.h files are meant to be C.
+" let g:c_syntax_for_h = 1
+
+" let generate_tags = 1
+let delimitMate_expand_cr = 1
+let g:ctrlp_map = '<c-p>'
+let g:ctrlp_cmd = 'CtrlP'
+let g:ctrlp_working_path_mode = 'ra'
+let g:alternateSearchPath = 'reg:|include/swift|lib|g,reg:|lib|include/swift|g,reg:|include/clang|lib|g,reg:|lib|include/clang|g,reg:|include/llvm|lib|g,reg:|lib|include/llvm|g'
+let g:swift_suppress_showmatch_warning = 1
+
+call pathogen#infect('bundle/{}')
+call pathogen#helptags()
+
+noremap  <F8> :TagbarToggle<CR>
+inoremap <F8> <ESC>:TagbarToggle<CR>
+
+"Basic options.
+set wrap "Enable line wrapping.
+set magic "Use the default mode for regexes.
+set number "Display line numbers.
+set hlsearch "Highlight search results.
+set incsearch "Use incremental (Firefox-style) searching.
+set ignorecase "Ignore case in searches.
+set smartcase "Interpret case in searches intelligently.
+set showmatch "Quickly highlight matching brackets when inserted.
+set autoindent "Enable automatic indentation.
+set copyindent "Use the same indentation convention as the last line.
+set showcmd "Show partial commands at the bottom of the screen.
+set noerrorbells "Disable annoying screen flashes.
+set showmode "Display the current mode.
+set ruler "Display the current line and column number.
+set hidden "Hide buffers instead of closing them.
+set splitbelow "Open new buffers beneath the current one. (:split)
+set splitright "Open new buffers to the right of the current one. (:vsplit)
+
+"Sundry settings.
+set modelines=0 "Disable modelines.
+set scrolloff=5 "View lines past the scroll target.
+set history=100 "Remember past commands.
+set undolevels=100 "We all make mistakes sometimes.
+set pastetoggle=<F2> "Jump into raw input mode.
+set wildmode=list:longest "Preferred completion mode.
+set wildignore=*.swp,*.pyc,*.class,*.o,*.so,*.rar,*.tar,*.a,*.out,*.dSYM,*.DS_Store  "Ignore these files.
+set backspace=indent,eol,start "Sane backspacing.
+set laststatus=2
+
+" Do not scan includes for completions.
+set complete-=i
+
+"Maintaining appearances.
+syntax on
+let g:lisp_rainbow = 1
+
+"set background=dark
+colorscheme kolor
+
+"Set language-specific indentation preferences.
+set shiftround
+filetype plugin indent on
+augroup filetype
+	au! BufRead,BufNewFile *.ll set filetype=llvm
+	au! BufRead,BufNewFile *.td set filetype=tablegen
+	au! BufRead,BufNewFile *.rs set filetype=rust
+	au! BufRead,BufNewFile *.tex set filetype=tex
+	au! BufRead,BufNewFile *.txt set filetype=text
+	au! BufRead,BufNewFile *.inc set filetype=text
+augroup END
+
+autocmd FileType llvm setlocal colorcolumn=80
+autocmd FileType text setlocal textwidth=80 colorcolumn=80
+"autocmd FileType c setlocal cindent tabstop=8 colorcolumn=80 tabstop=8 softtabstop=8 autoindent noexpandtab shiftwidth=8
+autocmd FileType c setlocal cindent expandtab shiftwidth=2 tabstop=2 softtabstop=2 colorcolumn=80
+autocmd FileType cpp setlocal cindent expandtab shiftwidth=2 tabstop=2 softtabstop=2 colorcolumn=80
+autocmd FileType cmake setlocal cindent expandtab shiftwidth=2 tabstop=2 softtabstop=2 colorcolumn=80
+autocmd FileType text setlocal cindent expandtab shiftwidth=2 tabstop=2 softtabstop=2 colorcolumn=80
+autocmd FileType scheme setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2 colorcolumn=80
+autocmd FileType python setlocal expandtab shiftwidth=4 softtabstop=4 colorcolumn=80
+autocmd FileType haskell setlocal expandtab shiftwidth=4 softtabstop=4 colorcolumn=80
+autocmd FileType tex setlocal textwidth=76 expandtab shiftwidth=4 tabstop=4 softtabstop=4 noautoindent nocopyindent colorcolumn=80
+autocmd FileType rust setlocal tabstop=4 shiftwidth=4 colorcolumn=80
+autocmd FileType erlang setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2 colorcolumn=80
+autocmd FileType java setlocal expandtab shiftwidth=4 tabstop=4 softtabstop=4 colorcolumn=80
+autocmd FileType html setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
+autocmd FileType ejs setlocal shiftwidth=2 tabstop=2 softtabstop=2
+autocmd FileType javascript setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2 colorcolumn=80
+autocmd FileType swift setlocal cindent expandtab shiftwidth=2 tabstop=2 softtabstop=2 colorcolumn=80 
+autocmd FileType pov setlocal cindent expandtab shiftwidth=2 tabstop=2 softtabstop=2 colorcolumn=80
+
+"Set leader.
+let mapleader = ","
+nnoremap <leader>. :CtrlPTag<cr>
+
+"Fix inconsistencies.
+noremap Y y$
+
+"Save a keystroke every time you enter command mode.
+noremap ; :
+noremap : ;
+
+"Make the default vertical navigation keys do something sane.
+noremap j gj
+noremap k gk
+
+"Write changes to protected read-only files.
+cmap w!! %!sudo tee > /dev/null %
+
+"Keep search term at the center of the screen.
+nnoremap <silent> N Nzz
+nnoremap <silent> n nzz
+nnoremap <silent> * *zz
+nnoremap <silent> # #zz
+nnoremap <silent> g* g*zz
+nnoremap <silent> g# g#zz
+
+"Clearing your screen can be easier.
+map <C-c> ;noh<CR>
+
+"Drag lines.
+map <C-j> ;m+<CR>
+map <C-k> ;m-2<CR>
+
+"Clang format.
+map <C-g> ;pyf /Users/vk/Desktop/llvm/tools/clang/tools/clang-format/clang-format.py<cr>
+imap <C-g> <c-o>;pyf /Users/vk/Desktop/llvm/tools/clang/tools/clang-format/clang-format.py<cr>
+
+"Window resizing.
+if bufwinnr(1)
+    map + <C-W>+
+    map - <C-W>-
+endif
+
+"Recursively search upwards for a tagfile.
+" set tags+=./tags;/
+
+"Open the current tag in a new tab, or a vertical split.
+map <C-\> ;tab split<CR>;exec("tag ".expand("<cword>"))<CR>
+
+"Manage your tabs with ease.
+map tt ;tabedit<Space>
+map tm ;tabmove<Space>
+map tf ;tabfind<Space>
+map tn ;tabnew<CR>
+map th ;tabprev<CR>
+map tl ;tabnext<CR>
+map tj ;tabfirst<CR>
+map tk ;tablast<CR>
+map <C-h> ;tabprev<CR>
+imap <C-h> <ESC>;tabprev<CR>
+map <C-l> ;tabnext<CR>
+imap <C-l> <ESC>;tabnext<CR>
+
+"Manage region folding.
+set foldmethod=manual
+set foldlevelstart=50
+inoremap <F9> <C-O>za
+nnoremap <F9> za
+onoremap <F9> <C-C>za
+vnoremap <F9> zf
+
+"Resize splits when the window is resized.
+autocmd VimResized * exe "normal! \<c-w>="
+
+"Bold highlighting for vim error messages. 
+match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
+
+"Change this on unreliable machines.
+set nobackup
+set noswapfile
+
+" Helper function to toggle hex mode
+function! ToggleHex()
+  " hex mode should be considered a read-only operation
+  " save values for modified and read-only for restoration later,
+  " and clear the read-only flag for now
+  let l:modified=&mod
+  let l:oldreadonly=&readonly
+  let &readonly=0
+  let l:oldmodifiable=&modifiable
+  let &modifiable=1
+  if !exists("b:editHex") || !b:editHex
+    " save old options
+    let b:oldft=&ft
+    let b:oldbin=&bin
+    " set new options
+    setlocal binary " make sure it overrides any textwidth, etc.
+    let &ft="xxd"
+    " set status
+    let b:editHex=1
+    " switch to hex editor
+    %!xxd
+  else
+    " restore old options
+    let &ft=b:oldft
+    if !b:oldbin
+      setlocal nobinary
+    endif
+    " set status
+    let b:editHex=0
+    " return to normal editing
+    %!xxd -r
+  endif
+  " restore values for modified and read only state
+  let &mod=l:modified
+  let &readonly=l:oldreadonly
+  let &modifiable=l:oldmodifiable
+endfunction
+
+function! LoadCscope()
+  let db = findfile("cscope.out", ".;")
+  if (!empty(db))
+    let path = strpart(db, 0, match(db, "/cscope.out$"))
+    set nocscopeverbose " suppress 'duplicate connection' error
+    exe "cs add " . db . " " . path
+    set cscopeverbose
+  endif
+endfunction
+au BufEnter /* call LoadCscope()

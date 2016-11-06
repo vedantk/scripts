@@ -1,0 +1,5 @@
+#!/bin/bash -x
+
+git-llvm checkout master
+git-llvm fetch
+git-llvm svn rebase -l
