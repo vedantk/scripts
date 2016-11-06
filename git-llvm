@@ -4,7 +4,7 @@ if [ ! -d include/llvm ]; then
 	exit 1
 fi
 
-DIRS=(. tools/clang tools/clang/tools/extra projects/compiler-rt projects/libcxx projects/libcxxabi tools/lldb tools/lld tools/swift)
+DIRS=(. tools/clang tools/clang/tools/extra projects/compiler-rt projects/libcxx projects/libcxxabi tools/lldb tools/lld tools/swift tools/polly)
 
 for dir in ${DIRS[@]}; do
 	if [ -d $dir ]; then
