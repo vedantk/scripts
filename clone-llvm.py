@@ -26,6 +26,7 @@ def shell(cmd):
     return subprocess.check_output(cmd, shell=True)
 
 def clone(project_name, username):
+    # If the checkout exists, bail.
     if os.access(project_name, os.F_OK):
         return
 

@@ -52,6 +52,7 @@ set pastetoggle=<F2> "Jump into raw input mode.
 set wildmode=list:longest "Preferred completion mode.
 set wildignore=*.swp,*.pyc,*.class,*.o,*.so,*.rar,*.tar,*.a,*.out,*.dSYM,*.DS_Store  "Ignore these files.
 set backspace=indent,eol,start "Sane backspacing.
+set tabpagemax=10000
 set laststatus=2
 
 " Do not scan includes for completions.
@@ -74,6 +75,7 @@ augroup filetype
 	au! BufRead,BufNewFile *.tex set filetype=tex
 	au! BufRead,BufNewFile *.txt set filetype=text
 	au! BufRead,BufNewFile *.inc set filetype=text
+	au! BufRead,BufNewFile *.m set filetype=objc
 augroup END
 
 autocmd FileType llvm setlocal colorcolumn=80
@@ -81,8 +83,9 @@ autocmd FileType text setlocal textwidth=80 colorcolumn=80
 "autocmd FileType c setlocal cindent tabstop=8 colorcolumn=80 tabstop=8 softtabstop=8 autoindent noexpandtab shiftwidth=8
 autocmd FileType c setlocal cindent expandtab shiftwidth=2 tabstop=2 softtabstop=2 colorcolumn=80
 autocmd FileType cpp setlocal cindent expandtab shiftwidth=2 tabstop=2 softtabstop=2 colorcolumn=80
+autocmd FileType objc setlocal cindent expandtab shiftwidth=2 tabstop=2 softtabstop=2 colorcolumn=80
 autocmd FileType cmake setlocal cindent expandtab shiftwidth=2 tabstop=2 softtabstop=2 colorcolumn=80
-autocmd FileType text setlocal cindent expandtab shiftwidth=2 tabstop=2 softtabstop=2 colorcolumn=80
+autocmd FileType text setlocal nocindent noautoindent expandtab shiftwidth=2 tabstop=2 softtabstop=2 colorcolumn=80
 autocmd FileType scheme setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2 colorcolumn=80
 autocmd FileType python setlocal expandtab shiftwidth=4 softtabstop=4 colorcolumn=80
 autocmd FileType haskell setlocal expandtab shiftwidth=4 softtabstop=4 colorcolumn=80
@@ -130,8 +133,8 @@ map <C-j> ;m+<CR>
 map <C-k> ;m-2<CR>
 
 "Clang format.
-map <C-g> ;pyf /Users/vk/Desktop/llvm/tools/clang/tools/clang-format/clang-format.py<cr>
-imap <C-g> <c-o>;pyf /Users/vk/Desktop/llvm/tools/clang/tools/clang-format/clang-format.py<cr>
+map <C-g> ;pyf /Users/vk/src/llvm.org-master/llvm/tools/clang/tools/clang-format/clang-format.py<cr>
+imap <C-g> <c-o>;pyf /Users/vk/src/llvm.org-master/llvm/tools/clang/tools/clang-format/clang-format.py<cr>
 
 "Window resizing.
 if bufwinnr(1)

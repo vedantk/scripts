@@ -25,6 +25,9 @@ bindkey -v
 # ulimit -c unlimited
 
 export EDITOR=vim
+export EMAIL=vsk@apple.com
+export REPLYTO=$EMAIL
+
 autoload edit-command-line; zle -N edit-command-line
 bindkey -M vicmd v edit-command-line
 
@@ -37,8 +40,8 @@ alias sl='ls'
 alias nin='ninja'
 alias ninha='ninja'
 
-alias v='vim'
-alias c='vim'
+alias v='vim -p'
+alias c='vim -p'
 
 alias g='git'
 alias gp='git pull'
@@ -58,7 +61,7 @@ alias tmux="caffeinate tmux -2"
 # cd to the llvm build directory, then run lit ...
 alias lit="../utils/lit/lit.py"
 
-export PATH=~/Desktop/llvm/DA/bin:~/int_zorg/tests/clang_qa/utils/:~/scripts:$PATH
+export PATH=/Applications/Xcode.app/Contents/Developer/usr/local/bin/:~/int_zorg/tests/clang_qa/utils/:~/scripts:$PATH
 
 PATH="/Users/vk/perl5/bin${PATH+:}${PATH}"; export PATH;
 PERL5LIB="/Users/vk/perl5/lib/perl5${PERL5LIB+:}${PERL5LIB}"; export PERL5LIB;

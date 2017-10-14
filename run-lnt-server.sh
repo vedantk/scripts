@@ -14,7 +14,7 @@ LNTPORT=8000
 mkdir -p $TMPDIR
 
 # Install lnt.
-sudo python lnt/setup.py develop
+sudo xcrun python lnt/setup.py develop
 
 # Setup sandbox.
 SERVERSANDBOX="$TMPDIR/sandbox.server"

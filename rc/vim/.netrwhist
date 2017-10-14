@@ -1,0 +1,11 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =9
+let g:netrw_dirhist_1='/private/tmp/ChatKit_ChatKit-1760.roots/BuildRecords/ChatKit_Sim_install'
+let g:netrw_dirhist_2='/private/tmp/MobileNotes_MobileNotes-1001.roots/BuildRecords/MobileNotes_Sim_install'
+let g:netrw_dirhist_3='/private/tmp/MobileNotes_MobileNotes-1001.roots/BuildRecords/MobileNotes_install'
+let g:netrw_dirhist_4='/Users/vk/Desktop/llvm/tools/clang/test/Index/Inputs/Frameworks/DocCommentsA.framework'
+let g:netrw_dirhist_5='/Users/vk/Downloads/PR22838296/Inputs/Headers'
+let g:netrw_dirhist_6='/Users/vk/private/pz-clang-ib'
+let g:netrw_dirhist_7='/Users/vk/Downloads/Problem 24125358'
+let g:netrw_dirhist_8='/Users/vk/clang/tools/scan-view/Resources'
+let g:netrw_dirhist_9='/Users/vk/Desktop/llvm/test/tools/llvm-cov/Inputs'
