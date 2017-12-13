@@ -58,13 +58,8 @@ alias rcbuildit='~rc/bin/buildit'
 alias ssh="caffeinate ssh"
 alias tmux="caffeinate tmux -2"
 
-# cd to the llvm build directory, then run lit ...
-alias lit="../utils/lit/lit.py"
+alias squash="git rebase -i HEAD~2"
 
-export PATH=/Applications/Xcode.app/Contents/Developer/usr/local/bin/:~/int_zorg/tests/clang_qa/utils/:~/scripts:$PATH
-
-PATH="/Users/vk/perl5/bin${PATH+:}${PATH}"; export PATH;
-PERL5LIB="/Users/vk/perl5/lib/perl5${PERL5LIB+:}${PERL5LIB}"; export PERL5LIB;
-PERL_LOCAL_LIB_ROOT="/Users/vk/perl5${PERL_LOCAL_LIB_ROOT+:}${PERL_LOCAL_LIB_ROOT}"; export PERL_LOCAL_LIB_ROOT;
-PERL_MB_OPT="--install_base \"/Users/vk/perl5\""; export PERL_MB_OPT;
-PERL_MM_OPT="INSTALL_BASE=/Users/vk/perl5"; export PERL_MM_OPT;
+export PATH=~/scripts:$PATH
+export PATH=~/int_zorg/tests/clang_qa/utils/:$PATH
+# export PATH=/Applications/Xcode.app/Contents/Developer/usr/local/bin/:$PATH
