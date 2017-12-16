@@ -10,4 +10,6 @@ set -g message-fg "white"
 set -g message-bg "black"
 
 set-option -g default-command "reattach-to-user-namespace -l zsh"
+
 bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "nc localhost 8377"
+# bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "pbcopy"
