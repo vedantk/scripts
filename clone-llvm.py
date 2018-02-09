@@ -21,9 +21,9 @@ class ChangeDir:
         print(':: Changing back to', self.old_dir)
         os.chdir(self.old_dir)
 
-def shell(cmd):
+def shell(cmd, verbose=False):
     print(':: Executing', cmd)
-    return subprocess.check_output(cmd, shell=True)
+    return subprocess.check_output(cmd, stderr=subprocess.PIPE, shell=True)
 
 def clone(project_name, username):
     # If the checkout exists, bail.
@@ -43,23 +43,12 @@ def clone(project_name, username):
         shell('git config svn-remote.svn.fetch :refs/remotes/origin/master')
         shell('git svn rebase -l')
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('path')
-    parser.add_argument('--username', help='svn username on llvm.org')
-    parser.add_argument('--clang', action='store_true', default=False)
-    parser.add_argument('--compiler_rt', action='store_true', default=False)
-    parser.add_argument('--libcxx', action='store_true', default=False)
-    parser.add_argument('--lldb', action='store_true', default=False)
-    parser.add_argument('--lld', action='store_true', default=False)
-    parser.add_argument('--polly', action='store_true', default=False)
-    args = parser.parse_args()
-
+def clone_repos(args):
     if not os.access(args.path, os.F_OK):
         os.makedirs(args.path)
 
     os.chdir(args.path)
-    
+
     clone('llvm', args.username)
 
     with ChangeDir('llvm/tools') as cd:
@@ -78,3 +67,47 @@ if __name__ == '__main__':
         if args.libcxx:
             clone('libcxx', args.username)
             clone('libcxxabi', args.username)
+
+def configure(args, mode):
+    src_dir = os.path.abspath(args.path)
+    build_dir = os.path.join(os.path.expanduser("~/src/builds"),
+                             os.path.basename(src_dir)) + '-' + mode
+
+    if os.access(build_dir, os.F_OK):
+        print("Build directory exists! Bailing.")
+        return
+
+    os.makedirs(build_dir)
+
+    cmd = ['xcrun cmake -G Ninja', src_dir]
+
+    use_release = '-DCMAKE_BUILD_TYPE=Release'
+    use_asserts = '-DLLVM_ENABLE_ASSERTIONS=On'
+    use_modules = '-DLLVM_ENABLE_MODULES=On'
+    use_minimal = '-DCLANG_ENABLE_ARCMT=Off ' \
+                  '-DCLANG_ENABLE_STATIC_ANALYZER=Off ' \
+                  '-DLLVM_TARGETS_TO_BUILD="X86;ARM;AArch64"'
+
+    if mode == "RA":
+        cmd.extend([use_release, use_asserts, use_modules, use_minimal])
+
+    with ChangeDir(build_dir) as cd:
+        shell(' '.join(cmd))
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('path')
+    parser.add_argument('--username', help='svn username on llvm.org')
+    parser.add_argument('--clang', action='store_true', default=False)
+    parser.add_argument('--compiler_rt', action='store_true', default=False)
+    parser.add_argument('--libcxx', action='store_true', default=False)
+    parser.add_argument('--lldb', action='store_true', default=False)
+    parser.add_argument('--lld', action='store_true', default=False)
+    parser.add_argument('--polly', action='store_true', default=False)
+    parser.add_argument('--configure_RA', action='store_true', default=False)
+    args = parser.parse_args()
+
+    if args.configure_RA:
+        configure(args, "RA")
+    else:
+        clone_repos(args)

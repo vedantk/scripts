@@ -49,6 +49,7 @@ alias gu='git push'
 alias gst='git status'
 alias gco='git checkout'
 alias gcp='git cherry-pick'
+alias gg='git grep'
 
 alias agent='eval $(keychain --eval --agents ssh -Q --quiet id_rsa)'
 
