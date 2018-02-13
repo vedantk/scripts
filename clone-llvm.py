@@ -21,7 +21,7 @@ class ChangeDir:
         print(':: Changing back to', self.old_dir)
         os.chdir(self.old_dir)
 
-def shell(cmd, verbose=False):
+def shell(cmd):
     print(':: Executing', cmd)
     return subprocess.check_output(cmd, stderr=subprocess.PIPE, shell=True)
 
@@ -68,10 +68,19 @@ def clone_repos(args):
             clone('libcxx', args.username)
             clone('libcxxabi', args.username)
 
-def configure(args, mode):
+def configure(args, mode, stage2=False):
     src_dir = os.path.abspath(args.path)
-    build_dir = os.path.join(os.path.expanduser("~/src/builds"),
-                             os.path.basename(src_dir)) + '-' + mode
+    if src_dir.endswith('/llvm'):
+        build_name = src_dir.split('/')[-2]
+    else:
+        build_name = os.path.basename(src_dir)
+    stage1_dir = os.path.join(os.path.expanduser("~/src/builds"),
+                              build_name + '-' + mode)
+
+    stage1_cc = os.path.join(stage1_dir, "bin/clang")
+    stage1_cxx = os.path.join(stage1_dir, "bin/clang++")
+
+    build_dir = stage1_dir if not stage2 else stage1_dir + "-stage2"
 
     if os.access(build_dir, os.F_OK):
         print("Build directory exists! Bailing.")
@@ -87,9 +96,16 @@ def configure(args, mode):
     use_minimal = '-DCLANG_ENABLE_ARCMT=Off ' \
                   '-DCLANG_ENABLE_STATIC_ANALYZER=Off ' \
                   '-DLLVM_TARGETS_TO_BUILD="X86;ARM;AArch64"'
+    use_sys_debugserver = '-DLLDB_CODESIGN_IDENTITY=""'
+    use_stage1 = '-DCMAKE_C_COMPILER={0} ' \
+                 '-DCMAKE_CXX_COMPILER={1}'.format(stage1_cc, stage1_cxx)
 
     if mode == "RA":
-        cmd.extend([use_release, use_asserts, use_modules, use_minimal])
+        # FIXME: Use modules (rdar://37467780).
+        cmd.extend([use_release, use_asserts, use_minimal, use_sys_debugserver])
+
+    if stage2:
+        cmd.append(use_stage1)
 
     with ChangeDir(build_dir) as cd:
         shell(' '.join(cmd))
@@ -105,9 +121,12 @@ if __name__ == '__main__':
     parser.add_argument('--lld', action='store_true', default=False)
     parser.add_argument('--polly', action='store_true', default=False)
     parser.add_argument('--configure_RA', action='store_true', default=False)
+    parser.add_argument('--configure_stage2_RA', action='store_true', default=False)
     args = parser.parse_args()
 
     if args.configure_RA:
         configure(args, "RA")
+    elif args.configure_stage2_RA:
+        configure(args, "RA", stage2=True)
     else:
         clone_repos(args)
