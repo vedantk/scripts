@@ -91,6 +91,7 @@ def configure(args, mode, stage2=False):
     cmd = ['xcrun cmake -G Ninja', src_dir]
 
     use_release = '-DCMAKE_BUILD_TYPE=Release'
+    use_debug = '-DCMAKE_BUILD_TYPE=Debug'
     use_asserts = '-DLLVM_ENABLE_ASSERTIONS=On'
     use_modules = '-DLLVM_ENABLE_MODULES=On'
     use_minimal = '-DCLANG_ENABLE_ARCMT=Off ' \
@@ -100,9 +101,11 @@ def configure(args, mode, stage2=False):
     use_stage1 = '-DCMAKE_C_COMPILER={0} ' \
                  '-DCMAKE_CXX_COMPILER={1}'.format(stage1_cc, stage1_cxx)
 
+    # FIXME: Use modules (rdar://37467780).
     if mode == "RA":
-        # FIXME: Use modules (rdar://37467780).
         cmd.extend([use_release, use_asserts, use_minimal, use_sys_debugserver])
+    elif mode == "DA":
+        cmd.extend([use_debug, use_asserts, use_minimal, use_sys_debugserver])
 
     if stage2:
         cmd.append(use_stage1)
@@ -122,11 +125,14 @@ if __name__ == '__main__':
     parser.add_argument('--polly', action='store_true', default=False)
     parser.add_argument('--configure_RA', action='store_true', default=False)
     parser.add_argument('--configure_stage2_RA', action='store_true', default=False)
+    parser.add_argument('--configure_DA', action='store_true', default=False)
     args = parser.parse_args()
 
     if args.configure_RA:
         configure(args, "RA")
     elif args.configure_stage2_RA:
         configure(args, "RA", stage2=True)
+    elif args.configure_DA:
+        configure(args, "DA")
     else:
         clone_repos(args)

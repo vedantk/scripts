@@ -50,6 +50,7 @@ alias gst='git status'
 alias gco='git checkout'
 alias gcp='git cherry-pick'
 alias gg='git grep'
+alias fst='cut -d":" -f1 | uniq | grep -v "Binary " | xargs'
 
 alias agent='eval $(keychain --eval --agents ssh -Q --quiet id_rsa)'
 
