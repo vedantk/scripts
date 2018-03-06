@@ -6,6 +6,7 @@
 	ff = pull --ff-only
 	fix = commit --amend
 	lg = log --decorate --graph --name-status
+	ctags = !.git/hooks/ctags
 [merge]
 	conflictstyle = diff3
 [push]

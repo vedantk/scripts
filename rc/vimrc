@@ -62,7 +62,7 @@ set complete-=i
 syntax on
 let g:lisp_rainbow = 1
 
-"set background=dark
+set background=light
 colorscheme kolor
 
 "Set language-specific indentation preferences.
@@ -138,8 +138,8 @@ map <C-j> ;m+<CR>
 map <C-k> ;m-2<CR>
 
 "Clang format.
-map <C-g> ;pyf /Users/vk/src/llvm.org-master/llvm/tools/clang/tools/clang-format/clang-format.py<cr>
-imap <C-g> <c-o>;pyf /Users/vk/src/llvm.org-master/llvm/tools/clang/tools/clang-format/clang-format.py<cr>
+map <C-g> ;pyf /Users/vsk/src/llvm.org-master/llvm/tools/clang/tools/clang-format/clang-format.py<cr>
+imap <C-g> <c-o>;pyf /Users/vsk/src/llvm.org-master/llvm/tools/clang/tools/clang-format/clang-format.py<cr>
 
 "Window resizing.
 if bufwinnr(1)
@@ -184,52 +184,3 @@ match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
 "Change this on unreliable machines.
 set nobackup
 set noswapfile
-
-" Helper function to toggle hex mode
-function! ToggleHex()
-  " hex mode should be considered a read-only operation
-  " save values for modified and read-only for restoration later,
-  " and clear the read-only flag for now
-  let l:modified=&mod
-  let l:oldreadonly=&readonly
-  let &readonly=0
-  let l:oldmodifiable=&modifiable
-  let &modifiable=1
-  if !exists("b:editHex") || !b:editHex
-    " save old options
-    let b:oldft=&ft
-    let b:oldbin=&bin
-    " set new options
-    setlocal binary " make sure it overrides any textwidth, etc.
-    let &ft="xxd"
-    " set status
-    let b:editHex=1
-    " switch to hex editor
-    %!xxd
-  else
-    " restore old options
-    let &ft=b:oldft
-    if !b:oldbin
-      setlocal nobinary
-    endif
-    " set status
-    let b:editHex=0
-    " return to normal editing
-    %!xxd -r
-  endif
-  " restore values for modified and read only state
-  let &mod=l:modified
-  let &readonly=l:oldreadonly
-  let &modifiable=l:oldmodifiable
-endfunction
-
-function! LoadCscope()
-  let db = findfile("cscope.out", ".;")
-  if (!empty(db))
-    let path = strpart(db, 0, match(db, "/cscope.out$"))
-    set nocscopeverbose " suppress 'duplicate connection' error
-    exe "cs add " . db . " " . path
-    set cscopeverbose
-  endif
-endfunction
-au BufEnter /* call LoadCscope()
