@@ -122,6 +122,9 @@ noremap k gk
 "Write changes to protected read-only files.
 cmap w!! %!sudo tee > /dev/null %
 
+"Get the directory containing the current file.
+cmap cf %:p:h
+
 "Keep search term at the center of the screen.
 nnoremap <silent> N Nzz
 nnoremap <silent> n nzz
