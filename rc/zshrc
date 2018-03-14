@@ -42,13 +42,46 @@ alias gst='git status'
 alias gco='git checkout'
 alias gcp='git cherry-pick'
 alias squash='git rebase -i HEAD~2'
-
-# Rapid search-and-edit.
 alias gg='git grep'
+
+# Grab the first column of the input, using ":" as the column separator.
 alias fst='cut -d":" -f1 | uniq | grep -v "Binary " | xargs'
 alias fstnl='cut -d":" -f1 | uniq | grep -v "Binary "'
+
+# Edit files matching a git-grep search.
 edit() { v $(gg $* | fstnl) }
+
+# Edit files with a name matching the pattern $1 (case-insensitively).
 editf() { v $(find . -iname "$1") }
+
+# Move to the directory containing the first file matching $1 (case-insensitively).
+cdf() { cd $(find . -iname "$1" -type f -exec dirname {} \; | head -n1) }
+
+# Move to the first directory matching $1 (case-insensitively).
+cdd() { cd $(find . -iname "$1" -type d | head -n1) }
+
+# Move to the build directory corresponding to the current source directory.
+cdb() {
+  src_dir=$(pwd | grep -Eo "$HOME/src/[^/]+")
+  src_label=$(basename $src_dir)
+  build_dir="$HOME/src/builds/$src_label-$1"
+  cd $build_dir
+}
+
+# Return the source directory corresponding to the current build directory.
+# Optionally drill down into a source subdirectory specified in $1.
+srcs() {
+  build_dir=$(pwd | grep -Eo "$HOME/src/builds/[^/]+")
+  src_label=$(basename $build_dir | sed -E 's/-(R|D)A//g' | sed 's/-stage2//g')
+  src_dir="$HOME/src/$src_label"
+  if [ -d $src_dir/llvm ]; then
+    src_dir=$src_dir/llvm
+  fi
+  echo "$src_dir/$1"
+}
+
+# Move to the source directory corresponding to the current build directory.
+cds() { cd $(srcs $*) }
 
 # Apple buildit.
 alias rcbuild='~rc/bin/buildit'
