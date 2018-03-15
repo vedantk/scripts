@@ -45,8 +45,7 @@ alias squash='git rebase -i HEAD~2'
 alias gg='git grep'
 
 # Grab the first column of the input, using ":" as the column separator.
-alias fst='cut -d":" -f1 | uniq | grep -v "Binary " | xargs'
-alias fstnl='cut -d":" -f1 | uniq | grep -v "Binary "'
+alias fstnl='cut -d":" -f1 | uniq | grep -vE "\.pyc$|Binary "'
 
 # Edit files matching a git-grep search.
 edit() { v $(gg $* | fstnl) }
