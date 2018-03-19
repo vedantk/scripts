@@ -94,6 +94,7 @@ def configure(args, mode, stage2=False):
     use_debug = '-DCMAKE_BUILD_TYPE=Debug'
     use_asserts = '-DLLVM_ENABLE_ASSERTIONS=On'
     use_modules = '-DLLVM_ENABLE_MODULES=On'
+    use_sanitizers = '-DLLVM_USE_SANITIZER="Address;Undefined"'
     use_minimal = '-DCLANG_ENABLE_ARCMT=Off ' \
                   '-DCLANG_ENABLE_STATIC_ANALYZER=Off ' \
                   '-DLLVM_TARGETS_TO_BUILD="X86;ARM;AArch64"'
@@ -106,6 +107,9 @@ def configure(args, mode, stage2=False):
         cmd.extend([use_release, use_asserts, use_minimal, use_sys_debugserver])
     elif mode == "DA":
         cmd.extend([use_debug, use_asserts, use_minimal, use_sys_debugserver])
+    elif mode == "SAN":
+        cmd.extend([use_debug, use_asserts, use_minimal, use_sys_debugserver,
+                    use_sanitizers])
 
     if stage2:
         cmd.append(use_stage1)
@@ -126,6 +130,7 @@ if __name__ == '__main__':
     parser.add_argument('--configure_RA', action='store_true', default=False)
     parser.add_argument('--configure_stage2_RA', action='store_true', default=False)
     parser.add_argument('--configure_DA', action='store_true', default=False)
+    parser.add_argument('--configure_SAN', action='store_true', default=False)
     args = parser.parse_args()
 
     if args.configure_RA:
@@ -134,5 +139,7 @@ if __name__ == '__main__':
         configure(args, "RA", stage2=True)
     elif args.configure_DA:
         configure(args, "DA")
+    elif args.configure_SAN:
+        configure(args, "SAN")
     else:
         clone_repos(args)
