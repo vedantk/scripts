@@ -71,7 +71,7 @@ cdb() {
 # Optionally drill down into a source subdirectory specified in $1.
 srcs() {
   build_dir=$(pwd | grep -Eo "$HOME/src/builds/[^/]+")
-  src_label=$(basename $build_dir | sed -E 's/-(R|D)A//g' | sed 's/-SAN//g' | sed 's/-stage2//g')
+  src_label=$(basename $build_dir | sed -E 's/-(R|D)A?//g' | sed 's/-SAN//g' | sed 's/-stage2//g')
   src_dir="$HOME/src/$src_label"
   if [ -d $src_dir/llvm ]; then
     src_dir=$src_dir/llvm

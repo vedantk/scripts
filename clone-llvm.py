@@ -110,6 +110,8 @@ def configure(args, mode, stage2=False):
     elif mode == "SAN":
         cmd.extend([use_debug, use_asserts, use_minimal, use_sys_debugserver,
                     use_sanitizers])
+    elif mode == "R":
+        cmd.extend([use_release, use_minimal, use_sys_debugserver])
 
     if stage2:
         cmd.append(use_stage1)
@@ -131,6 +133,7 @@ if __name__ == '__main__':
     parser.add_argument('--configure_stage2_RA', action='store_true', default=False)
     parser.add_argument('--configure_DA', action='store_true', default=False)
     parser.add_argument('--configure_SAN', action='store_true', default=False)
+    parser.add_argument('--configure_R', action='store_true', default=False)
     args = parser.parse_args()
 
     if args.configure_RA:
@@ -141,5 +144,7 @@ if __name__ == '__main__':
         configure(args, "DA")
     elif args.configure_SAN:
         configure(args, "SAN")
+    elif args.configure_R:
+        configure(args, "R")
     else:
         clone_repos(args)
