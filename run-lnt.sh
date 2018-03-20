@@ -1,122 +1,43 @@
-#!/bin/bash -x
+#!/bin/bash
 
-ROOTDIR=$HOME
-TMPDIR=/tmp/lnt
-LNTHOST=localhost
+source bin/activate
 
-# This apparently _has_ to be 8000.
-# Don't ask why.
-LNTPORT=8000 
-LNTSERVER=http://$LNTHOST:$LNTPORT
+runtest() {
+  flags=$1
+  name="config$(echo $1 | sed 's/ //g')"
+  sandbox_dir=~/src/builds/llvm.org-extend-lifetimes-R/bench/$name
+  mkdir $sandbox_dir
+  lnt runtest test-suite \
+  	  --sandbox $sandbox_dir \
+  	  --cc ~/src/builds/llvm.org-extend-lifetimes-R/bin/clang \
+  	  --test-suite ~/llvm-test-suite \
+  	  --test-externals ~/llvm-test-suite-externals \
+  	  --use-cmake="$(xcrun -f cmake)" \
+  	  --use-lit=/Users/vsk/src/builds/llvm.org-extend-lifetimes-RA/bin/llvm-lit \
+  	  --threads 10 \
+  	  --build-threads 20 \
+  	  --benchmarking-only \
+  	  --cppflags="$flags" 2>&1 | tee $sandbox_dir/log
+}
 
-# Install lnt.
-sudo python lnt/setup.py develop
+LEXT_THIS="-Xclang -extend-lifetimes=this"
+LEXT_ARGS="-Xclang -extend-lifetimes=arguments"
+LEXT_FULL="-Xclang -extend-lifetimes=all"
 
-# Setup client sandbox.
-CLIENTSANDBOX="$TMPDIR/sandbox.client"
-mkdir -p "$CLIENTSANDBOX"
+OPT_LEVELS=("-O1" "-Os" "-O2")
 
-### # Baseline, -O0 -g.
-### lnt runtest \
-###         --submit $LNTSERVER/db_default/submitRun \
-###         nt \
-###         -j2 \
-### 	--cc /Volumes/Builds/llvm.org-ubsan-alignment-R/bin/clang \
-### 	--cxx /Volumes/Builds/llvm.org-ubsan-alignment-R/bin/clang++ \
-###         --sandbox "$CLIENTSANDBOX" \
-###         --test-suite $ROOTDIR/test-suite \
-###         --test-externals $ROOTDIR/test-suite-externals \
-###         --optimize-option -O0 \
-###         --cflag -g \
-###         --cflag -resource-dir --cflag /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/8.1.0 \
-###         --cflag -isysroot --cflag /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk 
-### 
-### # UBSan, -O0 -g.
-### lnt runtest \
-###         --submit $LNTSERVER/db_default/submitRun \
-###         nt \
-###         -j2 \
-### 	--cc /Volumes/Builds/llvm.org-ubsan-alignment-R/bin/clang \
-### 	--cxx /Volumes/Builds/llvm.org-ubsan-alignment-R/bin/clang++ \
-###         --sandbox "$CLIENTSANDBOX" \
-###         --test-suite $ROOTDIR/test-suite \
-###         --test-externals $ROOTDIR/test-suite-externals \
-###         --optimize-option -O0 \
-###         --cflag -g \
-###         --cflag -fsanitize=undefined \
-###         --cflag -fno-sanitize=bounds,enum,return \
-###         --cflag -resource-dir --cflag /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/8.1.0 \
-###         --cflag -isysroot --cflag /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk 
+runtest "-O0 -g"
 
-# Baseline
-## lnt runtest \
-##         --submit $LNTSERVER/db_default/submitRun \
-##         nt \
-##         -j4 \
-## 	--cc $(xcrun -f clang) \
-## 	--cxx $(xcrun -f clang++) \
-##         --sandbox "$CLIENTSANDBOX" \
-##         --test-suite $ROOTDIR/test-suite \
-##         --optimize-option -O0 \
-##         --cflag -resource-dir --cflag /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/9.0.0 \
-##         --cflag -isysroot --cflag /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk 
+for opt_lvl in ${OPT_LEVELS[@]}; do
+  runtest "$opt_lvl -g"
+  runtest "$opt_lvl -flto -g"
 
-## # Repeat baseline -O0
-## lnt runtest \
-##         --submit $LNTSERVER/db_default/submitRun \
-##         nt \
-##         -j4 \
-## 	--cc /Volumes/Builds/llvm.org-master-R/bin/clang \
-## 	--cxx /Volumes/Builds/llvm.org-master-R/bin/clang++ \
-##         --sandbox "$CLIENTSANDBOX" \
-##         --test-suite $ROOTDIR/test-suite \
-##         --optimize-option -O0 \
-##         --cflag -resource-dir --cflag /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/9.0.0 \
-##         --cflag -isysroot --cflag /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk 
+  runtest "$opt_lvl $LEXT_THIS -g"
+  runtest "$opt_lvl $LEXT_THIS -flto -g"
 
-## # UBSan bare bones
-## lnt runtest \
-##         --submit $LNTSERVER/db_default/submitRun \
-##         nt \
-##         -j4 \
-## 	--cc /Volumes/Builds/llvm.org-master-R/bin/clang \
-## 	--cxx /Volumes/Builds/llvm.org-master-R/bin/clang++ \
-##         --sandbox "$CLIENTSANDBOX" \
-##         --test-suite $ROOTDIR/test-suite \
-##         --optimize-option -O0 \
-##         --cflag -static-libsan \
-##         --cflag -fsanitize=returns-nonnull-attribute \
-##         --cflag -resource-dir --cflag /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/9.0.0 \
-##         --cflag -isysroot --cflag /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk 
+  runtest "$opt_lvl $LEXT_ARGS -g"
+  runtest "$opt_lvl $LEXT_ARGS -flto -g"
 
-# UBSan on by default, no signed overflow
-lnt runtest \
-        --submit $LNTSERVER/db_default/submitRun \
-        nt \
-        -j4 \
-	--cc /Volumes/Builds/llvm.org-master-R/bin/clang \
-	--cxx /Volumes/Builds/llvm.org-master-R/bin/clang++ \
-        --sandbox "$CLIENTSANDBOX" \
-        --test-suite $ROOTDIR/test-suite \
-        --optimize-option -O0 \
-        --cflag -static-libsan \
-        --cflag -lc++abi \
-        --cflag -fsanitize=builtin,float-cast-overflow,integer-divide-by-zero,nonnull-attribute,returns-nonnull-attribute,shift-exponent,vla-bound \
-        --cflag -resource-dir --cflag /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/9.0.0 \
-        --cflag -isysroot --cflag /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk 
-
-# UBSan on by default
-lnt runtest \
-        --submit $LNTSERVER/db_default/submitRun \
-        nt \
-        -j4 \
-	--cc /Volumes/Builds/llvm.org-master-R/bin/clang \
-	--cxx /Volumes/Builds/llvm.org-master-R/bin/clang++ \
-        --sandbox "$CLIENTSANDBOX" \
-        --test-suite $ROOTDIR/test-suite \
-        --optimize-option -O0 \
-        --cflag -static-libsan \
-        --cflag -lc++abi \
-        --cflag -fsanitize=builtin,float-cast-overflow,integer-divide-by-zero,nonnull-attribute,returns-nonnull-attribute,shift-exponent,signed-integer-overflow,vla-bound \
-        --cflag -resource-dir --cflag /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/9.0.0 \
-        --cflag -isysroot --cflag /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk 
+  runtest "$opt_lvl $LEXT_FULL -g"
+  runtest "$opt_lvl $LEXT_FULL -flto -g"
+done
