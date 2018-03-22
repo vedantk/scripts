@@ -1,11 +1,33 @@
 #!/usr/bin/env python
 
-import json, os, argparse, sys, numpy
+import json, os, argparse, sys, numpy, re
 
 time_metric = "exec_time"
 size_metric = "size.__TEXT,__text"
 
+def memoize(f):
+    class Memoizer(dict):
+        def __missing__(self, key):
+            result = self[key] = f(key)
+            return result
+    return Memoizer().__getitem__
+
+def find_nested_json_output(name):
+    if os.path.isdir(name):
+        files = os.listdir(name)
+        for sub_file in files:
+            fname = os.path.join(name, sub_file)
+            if os.path.isdir(fname) and sub_file.startswith('test-'):
+                nested_files = os.listdir(fname)
+                for sub_sub_file in nested_files:
+                    if sub_sub_file.startswith('output') and \
+                            sub_sub_file.endswith('.json'):
+                        return os.path.join(fname, sub_sub_file)
+    return name
+
+@memoize
 def read_lit_json(filename):
+    filename = find_nested_json_output(filename)
     jsondata = json.load(open(filename))
     names = set()
     if 'tests' not in jsondata:
@@ -37,51 +59,29 @@ def read_lit_json(filename):
         tests[name] = test
     return tests
 
-def find_nested_json_output(name):
-    if os.path.isdir(name):
-        files = os.listdir(name)
-        for sub_file in files:
-            fname = os.path.join(name, sub_file)
-            if os.path.isdir(fname) and sub_file.startswith('test-'):
-                nested_files = os.listdir(fname)
-                for sub_sub_file in nested_files:
-                    if sub_sub_file.startswith('output') and \
-                            sub_sub_file.endswith('.json'):
-                        return os.path.join(fname, sub_sub_file)
-    return name
-
 def verify_compatible(lhsdata, rhsdata):
     assert len(lhsdata) == len(rhsdata)
     assert lhsdata.keys() == rhsdata.keys()
 
-def compare(config, lhs, rhs):
-    lhs = find_nested_json_output(lhs)
-    rhs = find_nested_json_output(rhs)
+def get_mean_exec_time(stats):
+    return numpy.mean([test['metrics'][time_metric] for test in stats.values()])
 
+def get_mean_binary_size(stats):
+    return numpy.mean([test['metrics'][size_metric] for test in stats.values()])
+
+def compare(config, lhs, rhs):
     lhsdata = read_lit_json(lhs)
     rhsdata = read_lit_json(rhs)
     verify_compatible(lhsdata, rhsdata)
-
-    lhs_times = []
-    time_overheads = []
-    lhs_sizes = []
-    size_overheads = []
-    for name, lhs_test in lhsdata.items():
-        lhs_test_m = lhs_test['metrics']
-        rhs_test_m = rhsdata[name]['metrics']
-
-        lhs_times.append(lhs_test_m[time_metric])
-        time_overhead = rhs_test_m[time_metric] - lhs_test_m[time_metric]
-        time_overheads.append(time_overhead)
-
-        lhs_sizes.append(lhs_test_m[size_metric])
-        size_overhead = rhs_test_m[size_metric] - lhs_test_m[size_metric]
-        size_overheads.append(size_overhead)
-
-    mean_time_overhead = numpy.mean(time_overheads) / numpy.mean(lhs_times)
-    mean_size_overhead = numpy.mean(size_overheads) / numpy.mean(lhs_sizes)
+    lhs_mean_time = get_mean_exec_time(lhsdata)
+    rhs_mean_time = get_mean_exec_time(rhsdata)
+    lhs_mean_size = get_mean_binary_size(lhsdata)
+    rhs_mean_size = get_mean_binary_size(rhsdata)
+    mean_time_overhead = (rhs_mean_time - lhs_mean_time) / lhs_mean_time
+    mean_size_overhead = (rhs_mean_size - lhs_mean_size) / lhs_mean_size
     print ','.join([config, "{:.2%}".format(mean_time_overhead), "{:.2%}".format(mean_size_overhead)])
 
+@memoize
 def read_dwarf_json(dirname):
     fname = os.path.join(dirname, 'dwarf_stats.json')
     return json.load(open(fname))
@@ -100,14 +100,13 @@ def get_var_availability(dwarf_stats):
     availability = []
     for stats in dwarf_stats:
         with_loc = stats["variables with location"]
+        src_funcs = stats["source functions"]
         inlined = stats["inlined functions"]
         if inlined == 0: continue
-        with_loc = float(with_loc) / inlined
-        unique_vars = stats["unique source variables"]
-        if unique_vars == 0: continue
-        avail_ratio = with_loc / float(unique_vars)
+        normalizer = src_funcs / float(inlined)
+        avail_ratio = with_loc * normalizer
         availability.append(avail_ratio)
-    return numpy.mean(availability)
+    return sum(availability)
 
 def compare_dwarf(config, lhs, rhs):
     lhsdata = read_dwarf_json(lhs)
@@ -123,9 +122,148 @@ def compare_dwarf(config, lhs, rhs):
     var_avail_incr = (rhs_var_avail / lhs_var_avail) - 1.0
     print ','.join([config, "{:.2%}".format(scope_cov_incr), "{:.2%}".format(var_avail_incr)])
 
+def pretty_print_config_name(config):
+    name = config.lstrip('config')
+    name = name.replace('-', ' -').lstrip(' ')
+    name = re.sub(' -g', '', name)
+    name = re.sub(' -Xclang', '', name)
+    name = re.sub('-extend -lifetimes', '-extend', name)
+    return name
+
 if __name__ == '__main__':
     # Missing data:
     # stepanov_v1p2: {u'output': u"\n/Users/vsk/src/builds/llvm.org-extend-lifetimes-R/bench/config-O1-flto-g/test-2018-03-20_04-03-09/tools/timeit --limit-core 0 --limit-cpu 7200 --timeout 7200 --limit-file-size 104857600 --limit-rss-size 838860800 --append-exitstatus --redirect-output /Users/vsk/src/builds/llvm.org-extend-lifetimes-R/bench/config-O1-flto-g/test-2018-03-20_04-03-09/SingleSource/Benchmarks/Misc-C++/Output/stepanov_v1p2.test.out --redirect-input /dev/null --summary /Users/vsk/src/builds/llvm.org-extend-lifetimes-R/bench/config-O1-flto-g/test-2018-03-20_04-03-09/SingleSource/Benchmarks/Misc-C++/Output/stepanov_v1p2.test.time /Users/vsk/src/builds/llvm.org-extend-lifetimes-R/bench/config-O1-flto-g/test-2018-03-20_04-03-09/SingleSource/Benchmarks/Misc-C++/stepanov_v1p2\n/Users/vsk/src/builds/llvm.org-extend-lifetimes-R/bench/config-O1-flto-g/test-2018-03-20_04-03-09/tools/fpcmp -a 0.01 /Users/vsk/src/builds/llvm.org-extend-lifetimes-R/bench/config-O1-flto-g/test-2018-03-20_04-03-09/SingleSource/Benchmarks/Misc-C++/Output/stepanov_v1p2.test.out /Users/vsk/llvm-test-suite/SingleSource/Benchmarks/Misc-C++/stepanov_v1p2.reference_output\n\n/Users/vsk/src/builds/llvm.org-extend-lifetimes-R/bench/config-O1-flto-g/test-2018-03-20_04-03-09/tools/fpcmp: FP Comparison failed, not a numeric difference between 't' and '\n'\n", u'code': u'FAIL', u'name': u'test-suite :: SingleSource/Benchmarks/Misc-C++/stepanov_v1p2.test', u'elapsed': 6.98985481262207}
+
+    ### Chart generation ###
+
+    opt_levels = ['O0', 'O1', 'Os', 'O2']
+    base_configs = []
+    for opt_lvl in opt_levels:
+        base_configs.append('config-' + opt_lvl + '-g')
+        if opt_lvl in ('O0', 'O1'):
+            continue
+
+        base_configs.append('config-' + opt_lvl + '-flto-g')
+    base_data = [read_lit_json(config) for config in base_configs]
+
+    base_dwarf_configs = []
+    for config in base_configs:
+        if 'flto' in config:
+            continue
+        base_dwarf_configs.append(config)
+    base_dwarf_data = [read_dwarf_json(config) for config in base_dwarf_configs]
+
+
+    # -O0 performance comparison
+    print "Configuration, Binary Size (bytes), Execution Time (seconds)"
+    for config, data in zip(base_configs, base_data):
+        name = pretty_print_config_name(config)
+        bsize = get_mean_binary_size(data)
+        exec_time = get_mean_exec_time(data)
+        print ', '.join([name, '{:.2f}'.format(bsize), '{:.2f}'.format(exec_time)])
+
+    print
+
+    # Scope Coverage comparison
+    print "Configuration, Scope Coverage (%), Scope Coverage (%) (-extend=this), " \
+            "Scope Coverage (%) (-extend=arguments), Scope Coverage (%) (-extend=all)"
+    for config, data in zip(base_dwarf_configs, base_dwarf_data):
+        name = pretty_print_config_name(config)
+        cov = get_mean_scope_coverage(data)
+        if 'O0' in config:
+            print ', '.join([name, '{:.2%}'.format(cov), '0', '0', '0'])
+            continue
+
+        ext_this_config = re.sub('-g', '-Xclang-extend-lifetimes=this-g', config)
+        ext_args_config = re.sub('-g', '-Xclang-extend-lifetimes=arguments-g', config)
+        ext_all_config = re.sub('-g', '-Xclang-extend-lifetimes=all-g', config)
+        ext_this_cov = get_mean_scope_coverage(read_dwarf_json(ext_this_config))
+        ext_args_cov = get_mean_scope_coverage(read_dwarf_json(ext_args_config))
+        ext_all_cov = get_mean_scope_coverage(read_dwarf_json(ext_all_config))
+
+        print ', '.join([name, '{:.2%}'.format(cov), '{:.2%}'.format(ext_this_cov),
+                '{:.2%}'.format(ext_args_cov), '{:.2%}'.format(ext_all_cov)])
+
+    print
+
+    # Variable availability comparison
+    print "Configuration, Variable Availability (%), Variable Availability (%) (-extend=this), " \
+            "Variable Availability (%) (-extend=arguments), Variable Availability (%) (-extend=all)"
+
+    O0_var_avail = get_var_availability(base_dwarf_data[0])
+    for config, data in zip(base_dwarf_configs, base_dwarf_data):
+        name = pretty_print_config_name(config)
+        if 'O0' in config:
+            print ', '.join([name, '1', '0', '0', '0'])
+            continue
+
+        avail = get_var_availability(data) / O0_var_avail
+        ext_this_config = re.sub('-g', '-Xclang-extend-lifetimes=this-g', config)
+        ext_args_config = re.sub('-g', '-Xclang-extend-lifetimes=arguments-g', config)
+        ext_all_config = re.sub('-g', '-Xclang-extend-lifetimes=all-g', config)
+        ext_this = get_var_availability(read_dwarf_json(ext_this_config)) / O0_var_avail
+        ext_args = get_var_availability(read_dwarf_json(ext_args_config)) / O0_var_avail
+        ext_all = get_var_availability(read_dwarf_json(ext_all_config)) / O0_var_avail
+
+        print ', '.join([name, '{:.2%}'.format(avail), '{:.2%}'.format(ext_this),
+                '{:.2%}'.format(ext_args), '{:.2%}'.format(ext_all)])
+
+    print
+
+    # Size comparison for -extend=...
+
+    print "Configuration, Binary Size (bytes), Binary Size (bytes) (-extend=this), Binary Size (bytes) (-extend=arguments), Binary Size (bytes) (-extend=all)"
+    for config, data in zip(base_configs, base_data):
+        name = pretty_print_config_name(config)
+        bsize = get_mean_binary_size(data)
+        if 'O0' in config:
+            print ', '.join([name, '{:.2f}'.format(bsize), '0', '0', '0'])
+            continue
+
+        if 'flto' in config:
+            ext_this_config = re.sub('-flto-g', '-Xclang-extend-lifetimes=this-flto-g', config)
+            ext_args_config = re.sub('-flto-g', '-Xclang-extend-lifetimes=arguments-flto-g', config)
+            ext_all_config = re.sub('-flto-g', '-Xclang-extend-lifetimes=all-flto-g', config)
+        else:
+            ext_this_config = re.sub('-g', '-Xclang-extend-lifetimes=this-g', config)
+            ext_args_config = re.sub('-g', '-Xclang-extend-lifetimes=arguments-g', config)
+            ext_all_config = re.sub('-g', '-Xclang-extend-lifetimes=all-g', config)
+        this_bsize = get_mean_binary_size(read_lit_json(ext_this_config))
+        args_bsize = get_mean_binary_size(read_lit_json(ext_args_config))
+        all_bsize = get_mean_binary_size(read_lit_json(ext_all_config))
+        print ', '.join([name, '{:.2f}'.format(bsize), '{:.2f}'.format(this_bsize),
+           '{:.2f}'.format(args_bsize), '{:.2f}'.format(all_bsize) ])
+
+    print
+
+    # Performance comparison for -extend=...
+
+    print "Configuration, Execution Time (seconds), Execution Time (seconds) (-extend=this), Execution Time (seconds) (-extend=arguments), Execution Time (seconds) (-extend=all)"
+    for config, data in zip(base_configs, base_data):
+        name = pretty_print_config_name(config)
+        exec_time = get_mean_exec_time(data)
+        if 'O0' in config:
+            print ', '.join([name, '{:.2f}'.format(exec_time), '0', '0', '0'])
+            continue
+
+        if 'flto' in config:
+            ext_this_config = re.sub('-flto-g', '-Xclang-extend-lifetimes=this-flto-g', config)
+            ext_args_config = re.sub('-flto-g', '-Xclang-extend-lifetimes=arguments-flto-g', config)
+            ext_all_config = re.sub('-flto-g', '-Xclang-extend-lifetimes=all-flto-g', config)
+        else:
+            ext_this_config = re.sub('-g', '-Xclang-extend-lifetimes=this-g', config)
+            ext_args_config = re.sub('-g', '-Xclang-extend-lifetimes=arguments-g', config)
+            ext_all_config = re.sub('-g', '-Xclang-extend-lifetimes=all-g', config)
+        this_exec_time = get_mean_exec_time(read_lit_json(ext_this_config))
+        args_exec_time = get_mean_exec_time(read_lit_json(ext_args_config))
+        all_exec_time =  get_mean_exec_time(read_lit_json(ext_all_config))
+        print ', '.join([name, '{:.2f}'.format(exec_time), '{:.2f}'.format(this_exec_time),
+           '{:.2f}'.format(args_exec_time), '{:.2f}'.format(all_exec_time) ])
+
+
+    # exit(0)
+
+    ###
 
     # Baseline
 
@@ -207,3 +345,7 @@ if __name__ == '__main__':
     compare_dwarf(" vs. -O0", 'config-O0-g', 'config-Os-Xclang-extend-lifetimes=all-g')
     compare_dwarf("-O2", 'config-O2-g', 'config-O2-Xclang-extend-lifetimes=all-g')
     compare_dwarf(" vs. -O0", 'config-O0-g', 'config-O2-Xclang-extend-lifetimes=all-g')
+
+    print "-O0 var availability:", get_var_availability(read_dwarf_json('config-O0-g'))
+    print "-O1 var availability:", get_var_availability(read_dwarf_json('config-O1-g'))
+    print "-O2 var availability:", get_var_availability(read_dwarf_json('config-O2-g'))
