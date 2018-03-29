@@ -9,6 +9,7 @@ cp tmuxrc ~/.tmux.conf
 cp gitconfig ~/.gitconfig
 
 # Run ctags when setting up or updating repos.
+mkdir -p ~/.git_template
 git config --global init.templatedir '~/.git_template'
 cp ctags-reindex ~/.git_template/hooks/ctags
 mkdir -p ~/.git_template/hooks
