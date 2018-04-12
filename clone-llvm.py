@@ -102,16 +102,16 @@ def configure(args, mode, stage2=False):
     use_stage1 = '-DCMAKE_C_COMPILER={0} ' \
                  '-DCMAKE_CXX_COMPILER={1}'.format(stage1_cc, stage1_cxx)
 
-    # FIXME: Use modules (rdar://37467780).
     if mode == "RA":
-        cmd.extend([use_release, use_asserts, use_minimal, use_sys_debugserver])
+        cmd.extend([use_release, use_asserts, use_minimal, use_sys_debugserver,
+                    use_modules])
     elif mode == "DA":
         cmd.extend([use_debug, use_asserts, use_minimal, use_sys_debugserver])
     elif mode == "SAN":
         cmd.extend([use_debug, use_asserts, use_minimal, use_sys_debugserver,
                     use_sanitizers])
     elif mode == "R":
-        cmd.extend([use_release, use_minimal, use_sys_debugserver])
+        cmd.extend([use_release, use_minimal, use_sys_debugserver, use_modules])
 
     if stage2:
         cmd.append(use_stage1)

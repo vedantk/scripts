@@ -82,6 +82,12 @@ srcs() {
 # Move to the source directory corresponding to the current build directory.
 cds() { cd $(srcs $*) }
 
+# Sum the numbers in a column of input.
+sumcol() { awk "{ sum += \$$1 } END { print sum }" }
+
+# Average the numbers in a column of input.
+avgcol() { awk "{ sum += \$$1 } END { print sum / NR }" }
+
 # Apple buildit.
 alias rcbuild='~rc/bin/buildit'
 

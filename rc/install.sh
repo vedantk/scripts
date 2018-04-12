@@ -13,5 +13,5 @@ mkdir -p ~/.git_template
 git config --global init.templatedir '~/.git_template'
 cp ctags-reindex ~/.git_template/hooks/ctags
 mkdir -p ~/.git_template/hooks
-cp run-ctags-reindex ~/.git_template/hooks/post-rewrite
-cp run-ctags-reindex ~/.git_template/hooks/post-checkout
+cp run-ctags-reindex ~/.git_template/hooks/post-rewrite && chmod +x ~/.git_template/hooks/post-rewrite
+cp run-ctags-reindex ~/.git_template/hooks/post-checkout && chmod +x ~/.git_template/hooks/post-checkout
