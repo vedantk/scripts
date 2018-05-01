@@ -6,7 +6,8 @@
 	ff = pull --ff-only
 	fix = commit --amend
 	lg = log --decorate --graph --name-status
-	ctags = !.git/hooks/ctags
+	ctags = ! .git/hooks/ctags
+	fmt = ! git diff -U0 --no-color HEAD^ | ~/src/llvm.org-master/llvm/tools/clang/tools/clang-format/clang-format-diff.py -i -p1
 [merge]
 	conflictstyle = diff3
 [push]
@@ -16,4 +17,3 @@
 [log]
 	decorate = true
 	date = local
-
