@@ -56,9 +56,6 @@ editf() { v $(find . -iname "$1") }
 # Move to the directory containing the first file matching $1 (case-insensitively).
 cdf() { cd $(find . -iname "$1" -type f -exec dirname {} \; | head -n1) }
 
-# Move to the first directory matching $1 (case-insensitively).
-cdd() { cd $(find . -iname "$1" -type d | head -n1) }
-
 # Move to the build directory corresponding to the current source directory.
 cdb() {
   src_dir=$(pwd | grep -Eo "$HOME/src/[^/]+")
@@ -71,7 +68,7 @@ cdb() {
 # Optionally drill down into a source subdirectory specified in $1.
 srcs() {
   build_dir=$(pwd | grep -Eo "$HOME/src/builds/[^/]+")
-  src_label=$(basename $build_dir | sed -E 's/-(R|D)A?//g' | sed 's/-SAN//g' | sed 's/-stage2//g')
+  src_label=$(basename $build_dir | sed -E 's/-(R|D)A?//g' | sed -E 's/-(SAN|stage2|all)//g')
   src_dir="$HOME/src/$src_label"
   if [ -d $src_dir/llvm ]; then
     src_dir=$src_dir/llvm

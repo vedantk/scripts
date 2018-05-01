@@ -105,6 +105,8 @@ def configure(args, mode, stage2=False):
     if mode == "RA":
         cmd.extend([use_release, use_asserts, use_minimal, use_sys_debugserver,
                     use_modules])
+    elif mode == "RA-all":
+        cmd.extend([use_release, use_asserts, use_sys_debugserver, use_modules])
     elif mode == "DA":
         cmd.extend([use_debug, use_asserts, use_minimal, use_sys_debugserver])
     elif mode == "SAN":
@@ -130,7 +132,9 @@ if __name__ == '__main__':
     parser.add_argument('--lld', action='store_true', default=False)
     parser.add_argument('--polly', action='store_true', default=False)
     parser.add_argument('--configure_RA', action='store_true', default=False)
+    parser.add_argument('--configure_RA_all', action='store_true', default=False)
     parser.add_argument('--configure_stage2_RA', action='store_true', default=False)
+    parser.add_argument('--configure_stage2_RA_all', action='store_true', default=False)
     parser.add_argument('--configure_DA', action='store_true', default=False)
     parser.add_argument('--configure_SAN', action='store_true', default=False)
     parser.add_argument('--configure_R', action='store_true', default=False)
@@ -138,8 +142,12 @@ if __name__ == '__main__':
 
     if args.configure_RA:
         configure(args, "RA")
+    if args.configure_RA_all:
+        configure(args, "RA-all")
     elif args.configure_stage2_RA:
         configure(args, "RA", stage2=True)
+    elif args.configure_stage2_RA_all:
+        configure(args, "RA-all", stage2=True)
     elif args.configure_DA:
         configure(args, "DA")
     elif args.configure_SAN:

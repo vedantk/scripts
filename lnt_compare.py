@@ -63,11 +63,14 @@ def verify_compatible(lhsdata, rhsdata):
     assert len(lhsdata) == len(rhsdata)
     assert lhsdata.keys() == rhsdata.keys()
 
+def geomean(arr):
+    return numpy.exp(numpy.log(arr).sum() / len(arr))
+
 def get_mean_exec_time(stats):
-    return numpy.mean([test['metrics'][time_metric] for test in stats.values()])
+    return geomean([test['metrics'][time_metric] for test in stats.values()])
 
 def get_mean_binary_size(stats):
-    return numpy.mean([test['metrics'][size_metric] for test in stats.values()])
+    return geomean([test['metrics'][size_metric] for test in stats.values()])
 
 def compare(config, lhs, rhs):
     lhsdata = read_lit_json(lhs)
