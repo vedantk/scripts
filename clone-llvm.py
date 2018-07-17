@@ -93,7 +93,7 @@ def configure(args, mode, stage2=False):
     use_release = '-DCMAKE_BUILD_TYPE=Release'
     use_debug = '-DCMAKE_BUILD_TYPE=Debug'
     use_asserts = '-DLLVM_ENABLE_ASSERTIONS=On'
-    use_modules = '-DLLVM_ENABLE_MODULES=On'
+    use_modules = '-DLLVM_ENABLE_MODULES=Off'
     use_sanitizers = '-DLLVM_USE_SANITIZER="Address;Undefined"'
     use_minimal = '-DCLANG_ENABLE_ARCMT=Off ' \
                   '-DCLANG_ENABLE_STATIC_ANALYZER=Off ' \
@@ -138,11 +138,12 @@ if __name__ == '__main__':
     parser.add_argument('--configure_DA', action='store_true', default=False)
     parser.add_argument('--configure_SAN', action='store_true', default=False)
     parser.add_argument('--configure_R', action='store_true', default=False)
+    parser.add_argument('--configure_stage2_R', action='store_true', default=False)
     args = parser.parse_args()
 
     if args.configure_RA:
         configure(args, "RA")
-    if args.configure_RA_all:
+    elif args.configure_RA_all:
         configure(args, "RA-all")
     elif args.configure_stage2_RA:
         configure(args, "RA", stage2=True)
@@ -154,5 +155,7 @@ if __name__ == '__main__':
         configure(args, "SAN")
     elif args.configure_R:
         configure(args, "R")
+    elif args.configure_stage2_R:
+        configure(args, "R", stage2=True)
     else:
         clone_repos(args)
