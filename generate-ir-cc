@@ -1,0 +1,34 @@
+#!/bin/bash
+
+BASE=/Users/vsk/src/builds/llvm.org-debug-invariance-RA-all
+
+last_pp=$(echo "$0" | grep -Eo "\+\+$")
+if [[ -z "$last_pp" ]]; then
+	CC=$BASE/bin/clang
+else
+	CC=$BASE/bin/clang++
+fi
+	
+IR_CACHE=$BASE/ir-cache
+
+if [[ ! -d $IR_CACHE ]]; then
+	echo "No IR cache found."
+	exit 1
+fi
+
+if [[ ! -f $CC ]]; then
+	echo "No compiler found."
+	exit 1
+fi
+
+# Run the compiler.
+$CC $* || exit 1
+
+# Check whether we can extract any IR from this job.
+emits_obj=$($CC '-###' $* 2>&1 | grep -o '"-emit-obj"')
+
+# Store the IR.
+if [[ ! -z "$emits_obj" ]]; then
+	ir_file=$(mktemp "$IR_CACHE/ir.XXXXXX") || exit 1
+	$CC $* -g0 -Xclang -disable-O0-optnone -emit-llvm -o $ir_file
+fi
