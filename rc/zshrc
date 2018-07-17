@@ -41,7 +41,7 @@ alias g='git'
 alias gst='git status'
 alias gco='git checkout'
 alias gcp='git cherry-pick'
-alias squash='git rebase -i HEAD~2'
+alias squash='git commit --amend -C @'
 alias gg='git grep'
 
 # Grab the first column of the input, using ":" as the column separator.
@@ -80,7 +80,7 @@ srcs() {
 cds() { cd $(srcs $*) }
 
 # Print out SIL function decls along with SIL debug locations.
-sil_locations() { grep -Eo 'sil [^@]*@[^ ]+|loc "[^"]+":\d+:\d+' $* }
+sil_locations() { grep -Eo 'sil [^@]*@[^ ]+|loc "[^"]+":\d+:\d+' $* | sed -E 's/"[^"]+"://g' }
 
 # Sum the numbers in a column of input.
 sumcol() { awk "{ sum += \$$1 } END { print sum }" }
@@ -94,6 +94,8 @@ alias rcbuild='~rc/bin/buildit'
 # Handling remote sessions.
 alias ssh="caffeinate ssh"
 alias tmux="caffeinate tmux -2"
+alias t="tmux"
+alias ta="tmux attach -t"
 alias clip="nc localhost 8377"
 alias agent='eval $(keychain --eval --agents ssh -Q --quiet id_rsa)'
 

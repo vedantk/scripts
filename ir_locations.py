@@ -4,7 +4,7 @@ import re, sys
 
 dbg_rx = re.compile(r'!dbg !(\d+)')
 diloc_rx = re.compile(r'!(\d+) = !DILocation\(line: (\d+), column: (\d+)')
-decl_rx = re.compile(r'^define .* (@\w+)')
+decl_rx = re.compile(r'^define [^(]* (@[._:\-\d\w]+)')
 
 with open(sys.argv[1], 'r') as f:
     lines = f.readlines()

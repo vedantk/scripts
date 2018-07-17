@@ -15,7 +15,7 @@ let delimitMate_expand_cr = 1
 let g:ctrlp_map = '<c-p>'
 let g:ctrlp_cmd = 'CtrlP'
 let g:ctrlp_working_path_mode = 'ra'
-let g:alternateSearchPath = 'reg:|include/swift|lib|g,reg:|lib|include/swift|g,reg:|include/clang|lib|g,reg:|lib|include/clang|g,reg:|include/llvm|lib|g,reg:|lib|include/llvm|g'
+let g:alternateSearchPath = 'reg:|source|include/lldb|g,reg:|include/lldb|source|g,reg:|include/swift|lib|g,reg:|lib|include/swift|g,reg:|include/clang|lib|g,reg:|lib|include/clang|g,reg:|include/llvm|lib|g,reg:|lib|include/llvm|g'
 let g:swift_suppress_showmatch_warning = 1
 
 call pathogen#infect('bundle/{}')
