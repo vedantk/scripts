@@ -24,8 +24,8 @@ EOF
 	exit 1
 }
 
-~/scripts/git-llvm checkout master || could_not_update
-~/scripts/git-llvm pull origin master || could_not_update
+~/scripts/git-lmap checkout master || could_not_update
+~/scripts/git-lmap pull origin master || could_not_update
 
 alert_about() {
 	COMMIT=$1
