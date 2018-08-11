@@ -70,9 +70,6 @@ srcs() {
   build_dir=$(pwd | grep -Eo "$HOME/src/builds/[^/]+")
   src_label=$(basename $build_dir | sed -E 's/-(R|D)A?//g' | sed -E 's/-(SAN|stage2|all)//g')
   src_dir="$HOME/src/$src_label"
-  if [ -d $src_dir/llvm ]; then
-    src_dir=$src_dir/llvm
-  fi
   echo "$src_dir/$1"
 }
 
@@ -109,3 +106,4 @@ export REPLYTO=$EMAIL
 
 export PATH=~/scripts:$PATH
 export PATH=~/int_zorg/tests/clang_qa/utils/:$PATH
+export PATH=~/src/llvm-project-master/llvm/utils/git-svn/:$PATH
