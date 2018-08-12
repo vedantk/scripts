@@ -7,22 +7,27 @@ inoremap <F10> <ESC>:NERDTreeToggle<CR>
 
 let NERDTreeIgnore=['\~$', '.*\.pyc$', 'pip-log\.txt$', '.*.pid', '.*\.o$']
 
+set rtp+=/usr/local/opt/fzf
+
+" [Buffers] Jump to the existing window if possible
+let g:fzf_buffers_jump = 1
+
+" [[B]Commits] Customize the options used by 'git log':
+let g:fzf_commits_log_options = '--graph --color=always --format="%C(auto)%h%d %s %C(black)%C(bold)%cr"'
+
+"Complete file paths
+imap <c-x><c-p> <plug>(fzf-complete-file) 
+
 " Set when *.h files are meant to be C.
 " let g:c_syntax_for_h = 1
 
 " let generate_tags = 1
 let delimitMate_expand_cr = 1
-let g:ctrlp_map = '<c-p>'
-let g:ctrlp_cmd = 'CtrlP'
-let g:ctrlp_working_path_mode = 'ra'
 let g:alternateSearchPath = 'reg:|source|include/lldb|g,reg:|include/lldb|source|g,reg:|include/swift|lib|g,reg:|lib|include/swift|g,reg:|include/clang|lib|g,reg:|lib|include/clang|g,reg:|include/llvm|lib|g,reg:|lib|include/llvm|g'
 let g:swift_suppress_showmatch_warning = 1
 
 call pathogen#infect('bundle/{}')
 call pathogen#helptags()
-
-noremap  <F8> :TagbarToggle<CR>
-inoremap <F8> <ESC>:TagbarToggle<CR>
 
 "Basic options.
 set wrap "Enable line wrapping.
@@ -62,8 +67,8 @@ set complete-=i
 syntax on
 let g:lisp_rainbow = 1
 
-set background=light
-colorscheme kolor
+set background=dark
+colorscheme seoul256 "kolor
 
 "Set language-specific indentation preferences.
 set shiftround
@@ -101,7 +106,8 @@ autocmd FileType pov setlocal cindent expandtab shiftwidth=2 tabstop=2 softtabst
 
 "Set leader.
 let mapleader = ","
-nnoremap <leader>. :CtrlPTag<cr>
+nnoremap <leader>. :Tags<cr>
+nnoremap <leader>p :FZF<cr>
 
 "Fix inconsistencies.
 noremap Y y$
@@ -151,7 +157,7 @@ if bufwinnr(1)
 endif
 
 "Recursively search upwards for a tagfile.
-" set tags+=./tags;/
+set tags+=./tags;/
 
 "Open the current tag in a new tab, or a vertical split.
 map <C-\> ;tab split<CR>;exec("tag ".expand("<cword>"))<CR>
@@ -161,10 +167,6 @@ map tt ;tabedit<Space>
 map tm ;tabmove<Space>
 map tf ;tabfind<Space>
 map tn ;tabnew<CR>
-map th ;tabprev<CR>
-map tl ;tabnext<CR>
-map tj ;tabfirst<CR>
-map tk ;tablast<CR>
 map <C-h> ;tabprev<CR>
 imap <C-h> <ESC>;tabprev<CR>
 map <C-l> ;tabnext<CR>

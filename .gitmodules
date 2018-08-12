@@ -1,0 +1,21 @@
+[submodule "rc/vim/bundle/a.vim"]
+	path = rc/vim/bundle/a.vim
+	url = https://github.com/vim-scripts/a.vim.git
+[submodule "rc/vim/bundle/nerdtree"]
+	path = rc/vim/bundle/nerdtree
+	url = https://github.com/scrooloose/nerdtree.git
+[submodule "rc/vim/bundle/supertab"]
+	path = rc/vim/bundle/supertab
+	url = https://github.com/ervandew/supertab.git
+[submodule "rc/vim/bundle/vim-fugitive"]
+	path = rc/vim/bundle/vim-fugitive
+	url = https://github.com/tpope/vim-fugitive.git
+[submodule "rc/vim/bundle/vim-surround"]
+	path = rc/vim/bundle/vim-surround
+	url = https://github.com/tpope/vim-surround.git
+[submodule "rc/vim/bundle/seoul256.vim"]
+	path = rc/vim/bundle/seoul256.vim
+	url = https://github.com/junegunn/seoul256.vim.git
+[submodule "rc/vim/bundle/fzf.vim"]
+	path = rc/vim/bundle/fzf.vim
+	url = https://github.com/junegunn/fzf.vim.git
