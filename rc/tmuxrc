@@ -23,7 +23,7 @@ bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "nc localhost 8
 # bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "pbcopy"
 
 # Creating vertical splits is a common case, so make it easier.
-bind-key -n C-v split-window -h
+bind-key -n C-x split-window -h
 
 # Switching between the next/previous window is also a common case.
 bind-key -n C-y select-window -p
