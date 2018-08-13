@@ -142,6 +142,10 @@ nnoremap <silent> g# g#zz
 "Clearing your screen can be easier.
 map <C-c> ;noh<CR>
 
+"Drag lines.
+map <C-j> ;m+<CR>
+map <C-k> ;m-2<CR>
+
 "Clang format.
 map <C-g> ;pyf /Users/vsk/src/llvm.org-master/llvm/tools/clang/tools/clang-format/clang-format.py<cr>
 imap <C-g> <c-o>;pyf /Users/vsk/src/llvm.org-master/llvm/tools/clang/tools/clang-format/clang-format.py<cr>
@@ -161,17 +165,10 @@ map <C-\> ;tab split<CR>;exec("tag ".expand("<cword>"))<CR>
 "Manage tabs with ease.
 map tm ;tabmove<Space>
 map tn ;tabnew<CR>
-map <C-n> ;tabprev<CR>
-imap <C-n> <ESC>;tabprev<CR>
-map <C-m> ;tabnext<CR>
-imap <C-m> <ESC>;tabnext<CR>
-
-"Seamless vim <-> tmux navigation.
-let g:tmux_navigator_no_mappings = 1
-nnoremap <silent> <c-h> :TmuxNavigateLeft<cr>
-nnoremap <silent> <c-j> :TmuxNavigateDown<cr>
-nnoremap <silent> <c-k> :TmuxNavigateUp<cr>
-nnoremap <silent> <c-l> :TmuxNavigateRight<cr>
+map <c-h> ;tabprev<CR>
+imap <c-h> <ESC>;tabprev<CR>
+map <c-l> ;tabnext<CR>
+imap <c-l> <ESC>;tabnext<CR>
 
 "Manage region folding.
 set foldmethod=manual

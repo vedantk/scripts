@@ -22,6 +22,3 @@
 [submodule "rc/vim/bundle/vim-gitgutter"]
 	path = rc/vim/bundle/vim-gitgutter
 	url = https://github.com/airblade/vim-gitgutter.git
-[submodule "rc/vim/bundle/vim-tmux-navigator"]
-	path = rc/vim/bundle/vim-tmux-navigator
-	url = https://github.com/christoomey/vim-tmux-navigator.git
