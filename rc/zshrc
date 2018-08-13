@@ -50,11 +50,11 @@ alias fst='cut -d":" -f1 | uniq | grep -vE "\.pyc$|Binary "'
 # Edit files matching a git-grep search.
 edit() { v $(gg $* | fst) }
 
-# Edit files with a name matching the pattern $1 (case-insensitively).
-editf() { v $(find . -iname "$1") }
+# Edit a file found with fzf.
+editf() { v $(fzf) }
 
-# Move to the directory containing the first file matching $1 (case-insensitively).
-cdf() { cd $(find . -iname "$1" -type f -exec dirname {} \; | head -n1) }
+# Move to a directory found with fzf.
+cdf() { cd $(dirname $(fzf)) }
 
 # Move to the build directory corresponding to the current source directory.
 cdb() {

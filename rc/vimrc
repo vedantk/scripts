@@ -16,7 +16,7 @@ let g:fzf_buffers_jump = 1
 let g:fzf_commits_log_options = '--graph --color=always --format="%C(auto)%h%d %s %C(black)%C(bold)%cr"'
 
 "Complete file paths
-imap <c-x><c-p> <plug>(fzf-complete-file) 
+imap <c-p> <plug>(fzf-complete-file)
 
 " Set when *.h files are meant to be C.
 " let g:c_syntax_for_h = 1
@@ -68,7 +68,7 @@ syntax on
 let g:lisp_rainbow = 1
 
 set background=dark
-colorscheme seoul256 "kolor
+colorscheme seoul256
 
 "Set language-specific indentation preferences.
 set shiftround
@@ -142,10 +142,6 @@ nnoremap <silent> g# g#zz
 "Clearing your screen can be easier.
 map <C-c> ;noh<CR>
 
-"Drag lines.
-map <C-j> ;m+<CR>
-map <C-k> ;m-2<CR>
-
 "Clang format.
 map <C-g> ;pyf /Users/vsk/src/llvm.org-master/llvm/tools/clang/tools/clang-format/clang-format.py<cr>
 imap <C-g> <c-o>;pyf /Users/vsk/src/llvm.org-master/llvm/tools/clang/tools/clang-format/clang-format.py<cr>
@@ -163,14 +159,12 @@ set tags+=./tags;/
 map <C-\> ;tab split<CR>;exec("tag ".expand("<cword>"))<CR>
 
 "Manage tabs with ease.
-map tt ;tabedit<Space>
 map tm ;tabmove<Space>
-map tf ;tabfind<Space>
 map tn ;tabnew<CR>
-map <C-h> ;tabprev<CR>
-imap <C-h> <ESC>;tabprev<CR>
-map <C-l> ;tabnext<CR>
-imap <C-l> <ESC>;tabnext<CR>
+map <C-n> ;tabprev<CR>
+imap <C-n> <ESC>;tabprev<CR>
+map <C-m> ;tabnext<CR>
+imap <C-m> <ESC>;tabnext<CR>
 
 "Seamless vim <-> tmux navigation.
 let g:tmux_navigator_no_mappings = 1
