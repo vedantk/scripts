@@ -85,6 +85,9 @@ sumcol() { awk "{ sum += \$$1 } END { print sum }" }
 # Average the numbers in a column of input.
 avgcol() { awk "{ sum += \$$1 } END { print sum / NR }" }
 
+# Pretty-print "squashed" JSON read from stdin. Removes Python `u` Unicode prefixes.
+ppjson() { python -c "import json, pprint; pprint.pprint(json.loads(raw_input()))" | sed -E "s/u'([^']*)'/ '\1'/g" }
+
 # Apple buildit.
 alias rcbuild='~rc/bin/buildit'
 
