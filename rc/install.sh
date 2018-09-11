@@ -1,7 +1,6 @@
 #!/bin/bash
 
 cp vimrc ~/.vimrc
-ditto vim ~/.vim
 
 echo "source ~/scripts/rc/zshrc" > ~/.zshrc
 

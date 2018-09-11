@@ -1,10 +1,23 @@
 set nocompatible
 set encoding=utf-8
 
+call plug#begin('~/.vim/plugged')
+
+Plug 'airblade/vim-gitgutter'
+Plug 'ervandew/supertab'
+Plug 'junegunn/fzf'
+Plug 'junegunn/seoul256.vim'
+Plug 'rhysd/vim-llvm'
+Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-surround'
+Plug 'vim-scripts/a.vim'
+
+call plug#end()
+
 "Set plugin options.
 noremap  <F10> :NERDTreeToggle<CR>
 inoremap <F10> <ESC>:NERDTreeToggle<CR>
-
 let NERDTreeIgnore=['\~$', '.*\.pyc$', 'pip-log\.txt$', '.*.pid', '.*\.o$']
 
 set rtp+=/usr/local/opt/fzf
@@ -21,13 +34,9 @@ imap <c-p> <plug>(fzf-complete-file)
 " Set when *.h files are meant to be C.
 " let g:c_syntax_for_h = 1
 
-" let generate_tags = 1
 let delimitMate_expand_cr = 1
 let g:alternateSearchPath = 'reg:|source|include/lldb|g,reg:|include/lldb|source|g,reg:|include/swift|lib|g,reg:|lib|include/swift|g,reg:|include/clang|lib|g,reg:|lib|include/clang|g,reg:|include/llvm|lib|g,reg:|lib|include/llvm|g'
 let g:swift_suppress_showmatch_warning = 1
-
-call pathogen#infect('bundle/{}')
-call pathogen#helptags()
 
 "Basic options.
 set wrap "Enable line wrapping.
@@ -113,11 +122,11 @@ nnoremap <leader>p :FZF<cr>
 noremap Y y$
 
 "Copy to clipboard (local).
-" nnoremap <leader>y :call system('pbcopy', @0)<CR>
+nnoremap <leader>y :call system('pbcopy', @0)<CR>
 "Copy to clipboard (remote).
-nnoremap <leader>y :call system('nc localhost 8377', @0)<CR>
+" nnoremap <leader>y :call system('nc localhost 8377', @0)<CR>
 
-"Save a keystroke every time you enter command mode.
+"Save a keystroke when entering command mode.
 noremap ; :
 noremap : ;
 
@@ -139,7 +148,7 @@ nnoremap <silent> # #zz
 nnoremap <silent> g* g*zz
 nnoremap <silent> g# g#zz
 
-"Clearing your screen can be easier.
+"Ctrl-C clears the screen of highlights.
 map <C-c> ;noh<CR>
 
 "Drag lines.
@@ -147,8 +156,8 @@ map <C-j> ;m+<CR>
 map <C-k> ;m-2<CR>
 
 "Clang format.
-map <C-g> ;pyf /Users/vsk/src/llvm.org-master/llvm/tools/clang/tools/clang-format/clang-format.py<cr>
-imap <C-g> <c-o>;pyf /Users/vsk/src/llvm.org-master/llvm/tools/clang/tools/clang-format/clang-format.py<cr>
+map <C-g> ;pyf /Users/vsk/src/llvm-project-master/llvm/tools/clang/tools/clang-format/clang-format.py<cr>
+imap <C-g> <c-o>;pyf /Users/vsk/src/llvm-project-master/llvm/tools/clang/tools/clang-format/clang-format.py<cr>
 
 "Window resizing.
 if bufwinnr(1)
