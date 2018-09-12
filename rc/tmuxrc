@@ -14,7 +14,7 @@ set -g status-right '[#H]#[bold][%h %d %Y %l:%M %p]'
 set -g status-right-length 80
 
 # This is some macOS mumbo jumbo to enable copy/paste.
-set-option -g default-command "reattach-to-user-namespace -l zsh 2>/dev/null"
+set-option -g default-command "reattach-to-user-namespace -l zsh"
 
 # On remote machines, copy to the host's clippy instance.
 # bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "nc localhost 8377"
