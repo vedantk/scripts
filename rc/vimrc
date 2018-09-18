@@ -1,11 +1,14 @@
 set nocompatible
 set encoding=utf-8
 
+set rtp+=/usr/local/opt/fzf
+
 call plug#begin('~/.vim/plugged')
 
 Plug 'airblade/vim-gitgutter'
 Plug 'ervandew/supertab'
 Plug 'junegunn/fzf'
+Plug 'junegunn/fzf.vim'
 Plug 'junegunn/seoul256.vim'
 Plug 'rhysd/vim-llvm'
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
@@ -19,8 +22,6 @@ call plug#end()
 noremap  <F10> :NERDTreeToggle<CR>
 inoremap <F10> <ESC>:NERDTreeToggle<CR>
 let NERDTreeIgnore=['\~$', '.*\.pyc$', 'pip-log\.txt$', '.*.pid', '.*\.o$']
-
-set rtp+=/usr/local/opt/fzf
 
 " [Buffers] Jump to the existing window if possible
 let g:fzf_buffers_jump = 1
@@ -156,8 +157,8 @@ map <C-j> ;m+<CR>
 map <C-k> ;m-2<CR>
 
 "Clang format.
-map <C-g> ;pyf /Users/vsk/src/llvm-project-master/llvm/tools/clang/tools/clang-format/clang-format.py<cr>
-imap <C-g> <c-o>;pyf /Users/vsk/src/llvm-project-master/llvm/tools/clang/tools/clang-format/clang-format.py<cr>
+map <C-g> ;pyf /Users/vsk/src/llvm-project-master/clang/tools/clang-format/clang-format.py<cr>
+imap <C-g> <c-o>;pyf /Users/vsk/src/llvm-project-master/clang/tools/clang-format/clang-format.py<cr>
 
 "Window resizing.
 if bufwinnr(1)
