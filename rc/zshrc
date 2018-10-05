@@ -84,11 +84,17 @@ configure_monorepo() {
   mkdir -p $build_dir || return
   cd $build_dir
   src_dir=$(srcs llvm)
+  llvm_cmake_configure="xcrun cmake -G Ninja $src_dir -DLLVM_ENABLE_PROJECTS='clang;libcxx;libcxxabi;lldb;compiler-rt;debuginfo-tests;clang-tools-extra;libunwind' -DLLDB_CODESIGN_IDENTITY=''"
   if [[ "$1" == "RA" ]]; then
-    xcrun cmake -G Ninja $src_dir -DLLVM_ENABLE_PROJECTS="clang;libcxx;libcxxabi;lldb;compiler-rt;debuginfo-tests;clang-tools-extra;libunwind" -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=On -DLLDB_CODESIGN_IDENTITY=""
+     llvm_cmake_configure="$llvm_cmake_configure -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=On"
+  elif [[ "$1" == "R" ]]; then
+     llvm_cmake_configure="$llvm_cmake_configure -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=Off"
   else
     echo "Don't know how to configure $1."
+    rm -rf $build_dir
+    return
   fi
+  eval "$llvm_cmake_configure"
 }
 
 # Print out SIL function decls along with SIL debug locations.
@@ -125,3 +131,4 @@ export REPLYTO=$EMAIL
 export PATH=~/scripts:$PATH
 export PATH=~/int_zorg/tests/clang_qa/utils/:$PATH
 export PATH=~/src/llvm-project-master/llvm/utils/git-svn/:$PATH
+export PATH=/opt/distcc-r796/bin:$PATH

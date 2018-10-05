@@ -14,13 +14,18 @@ set -g status-right '[#H]#[bold][%h %d %Y %l:%M %p]'
 set -g status-right-length 80
 
 # This is some macOS mumbo jumbo to enable copy/paste.
-set-option -g default-command "reattach-to-user-namespace -l zsh"
+# set-option -g default-command "reattach-to-user-namespace -l zsh"
+
+bind-key -T copy-mode-vi v send -X begin-selection
+bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "pbcopy"
+bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "pbcopy"
+bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "pbcopy"
 
 # On remote machines, copy to the host's clippy instance.
 # bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "nc localhost 8377"
 
 # On local machines, copy to the clipboard.
-bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "pbcopy"
+# bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "pbcopy"
 
 # Creating vertical splits is a common case, so make it easier.
 bind-key -n C-s split-window -h
