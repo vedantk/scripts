@@ -95,9 +95,7 @@ def configure(args, mode, stage2=False):
     use_asserts = '-DLLVM_ENABLE_ASSERTIONS=On'
     use_modules = '-DLLVM_ENABLE_MODULES=Off'
     use_sanitizers = '-DLLVM_USE_SANITIZER="Address;Undefined"'
-    use_minimal = '-DCLANG_ENABLE_ARCMT=Off ' \
-                  '-DCLANG_ENABLE_STATIC_ANALYZER=Off ' \
-                  '-DLLVM_TARGETS_TO_BUILD="X86;ARM;AArch64"'
+    use_minimal = '-DLLVM_TARGETS_TO_BUILD="X86;ARM;AArch64"'
     use_sys_debugserver = '-DLLDB_CODESIGN_IDENTITY=""'
     use_stage1 = '-DCMAKE_C_COMPILER={0} ' \
                  '-DCMAKE_CXX_COMPILER={1}'.format(stage1_cc, stage1_cxx)
