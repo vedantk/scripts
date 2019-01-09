@@ -35,6 +35,11 @@ copy_dsym() {
 
 COPIES=0
 for PROJECT in $(ls); do
+	grep -q "$PROJECT" ~/Desktop/SharedCacheDylibPaths.txt
+	if [[ "$?" -ne "0" ]]; then
+		continue
+	fi
+
 	copy_dsym $PROJECT $COPIES &
 
 	# Launching > 600 processes to copy files over NFS results

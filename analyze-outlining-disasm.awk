@@ -1,6 +1,6 @@
 BEGIN {
 	numFuncs = 0
-	numUnoutlinedFuncsWithBrk = 0
+	numOutlinedFuncsWithBrk = 0
 	numFuncsWithAssertRtn = 0
 	numFuncsWithOSLog = 0
 	funcHasBrk = 0
@@ -10,6 +10,7 @@ BEGIN {
 	numOutlinedFuncs = 0
 	outlinedBytes = 0
 	funcName = ""
+	totalBytes = 0
 }
 
 /:$/ {
@@ -30,10 +31,11 @@ BEGIN {
 }
 
 /^0000/ {
-	bytesInFunc += 4
+	totalBytes += 4
 	if (isOutlined == 1) {
 		outlinedBytes += 4
-		if ($0 ~ /abort|assert|brk|os_log/) {
+		# print $0
+		if ($0 ~ /Unwind_Resume|abort|assert|brk|os_log/) {
 			print $0
 			print ""
 		}
@@ -42,8 +44,8 @@ BEGIN {
 
 /brk/ {
 	if (funcHasBrk == 0) {
-		if (isOutlined == 0) {
-			numUnoutlinedFuncsWithBrk += 1
+		if (isOutlined == 1) {
+			numOutlinedFuncsWithBrk += 1
 		}
 		funcHasBrk = 1
 	}
@@ -65,9 +67,11 @@ BEGIN {
 
 END {
 	print "numFuncs:" numFuncs
-	print "numUnoutlinedFuncsWithBrk:" numUnoutlinedFuncsWithBrk
+	print "numOutlinedFuncsWithBrk:" numOutlinedFuncsWithBrk
 	print "numOutlinedFuncs:" numOutlinedFuncs
-	print "outlinedBytes:" outlinedBytes
 	print "numFuncsWithAssertRtn:" numFuncsWithAssertRtn
 	print "numFuncsWithOSLog:" numFuncsWithOSLog
+	print "totalBytes:" totalBytes
+	print "outlinedBytes:" outlinedBytes
+	print "outlined:" outlinedBytes/(1.0*totalBytes)
 }
