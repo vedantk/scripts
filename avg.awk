@@ -15,22 +15,31 @@ BEGIN {
 }
 
 END {
-	mean = sum / idx
+	if (idx > 0) {
+		mean = sum / idx
 
-	sum_of_squares = 0
-	for (input in inputs) {
-		sum_of_squares += (inputs[input] - mean)^2
-	}
-	variance = sum_of_squares / idx
-	stddev = sqrt(variance)
+		sum_of_squares = 0
+		for (input in inputs) {
+			sum_of_squares += (inputs[input] - mean)^2
+		}
+		variance = sum_of_squares / idx
+		stddev = sqrt(variance)
 
-	sum_of_logs = 0
-	for (input in inputs) {
-		sum_of_logs += log(inputs[input])
+		sum_of_logs = 0
+		for (input in inputs) {
+			if (inputs[input] > 0) {
+				sum_of_logs += log(inputs[input])
+			}
+		}
+		geomean = exp(sum_of_logs / idx)
+	} else {
+		mean = 0
+		stddev = 0
+		geomean = 0
 	}
-	geomean = exp(sum_of_logs / idx)
 
 	print "Mean: " mean
 	print "Stddev: " stddev
 	print "Geomean: " geomean
+	print "NumInputs: " idx
 }

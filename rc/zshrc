@@ -48,7 +48,7 @@ alias gg='git grep'
 alias fst='cut -d":" -f1 | uniq | grep -vE "\.pyc$|Binary "'
 
 # Edit files matching a git-grep search.
-edit() { v $(gg $* | fst) }
+edit() { v $(gg -l $*) }
 
 # Edit a file found with fzf.
 editf() { v $(fzf) }
