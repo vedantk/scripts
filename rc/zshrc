@@ -44,6 +44,10 @@ alias gcp='git cherry-pick'
 alias squash='git commit --amend -C @'
 alias gg='git grep'
 
+# AWS.
+alias aws='/Users/vsk/Library/Python/2.7/bin/aws'
+alias blobby='aws --endpoint-url https://blob.mr3.simcloud.apple.com --cli-read-timeout 300'
+
 # Grab the first column of the input, using ":" as the column separator.
 alias fst='cut -d":" -f1 | uniq | grep -vE "\.pyc$|Binary "'
 
@@ -110,6 +114,16 @@ avgcol() {
 	awk -f ~/scripts/avg.awk -v col=$1
 }
 
+# Display call trees for non-object allocations given a MSL-enabled memgraph. Usage: <memgraph> <class> <invert-flag-or-none>.
+msl_stacks() {
+	if [[ ! -e "$1" || -z "$2" ]]; then
+		echo "Usage: <memgraph> <class> <invert-flag-or-none>"
+	else
+		filter="/^0x.*: $2/ { print \$1 }"
+		malloc_history $1 -callTree -consolidateAllBySymbol $3 $(heap --addresses=all $1 | awk -F ':' "$filter" | tr '\n' ' ') | grep -v "backtraces for"
+	fi
+}
+
 # Pretty-print "squashed" JSON read from stdin. Removes Python `u` Unicode prefixes.
 ppjson() { python -c "import json, pprint; pprint.pprint(json.loads(raw_input()))" | sed -E "s/u'([^']*)'/ '\1'/g" }
 
@@ -136,7 +150,6 @@ export EDITOR=vim
 export EMAIL=vsk@apple.com
 export REPLYTO=$EMAIL
 
+export PATH=/Applications/OSEng.app/Contents/Developer/usr/local/bin/:$PATH
 export PATH=~/scripts:$PATH
-export PATH=~/int_zorg/tests/clang_qa/utils/:$PATH
 export PATH=~/src/llvm-project-master/llvm/utils/git-svn/:$PATH
-export PATH=/opt/distcc-r796/bin:$PATH
