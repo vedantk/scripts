@@ -7,7 +7,7 @@ BEGIN {
 }
 
 {
-	if ($col ~ /^[0-9]+(\.[0-9]+)?$/) {
+	if ($col ~ /^-?[0-9]+(\.[0-9]+)?$/) {
 		sum += $col
 		inputs[idx] = $col
 		idx += 1
@@ -27,11 +27,12 @@ END {
 
 		sum_of_logs = 0
 		for (input in inputs) {
-			if (inputs[input] > 0) {
-				sum_of_logs += log(inputs[input])
-			}
+			sum_of_logs += log(sqrt(inputs[input] ^ 2))
 		}
 		geomean = exp(sum_of_logs / idx)
+		if (mean < 0) {
+			geomean *= -1
+		}
 	} else {
 		mean = 0
 		stddev = 0
