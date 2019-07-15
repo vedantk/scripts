@@ -4,13 +4,22 @@
 BEGIN {
 	sum = 0
 	idx = 0
+	min = -log(0)
+	max = log(0)
 }
 
 {
 	if ($col ~ /^-?[0-9]+(\.[0-9]+)?$/) {
-		sum += $col
-		inputs[idx] = $col
+		val = $col
+		sum += val
+		inputs[idx] = val
 		idx += 1
+		if (val < min) {
+			min = val
+		}
+		if (val > max) {
+			max = val
+		}
 	}
 }
 
@@ -27,7 +36,13 @@ END {
 
 		sum_of_logs = 0
 		for (input in inputs) {
-			sum_of_logs += log(sqrt(inputs[input] ^ 2))
+			val = inputs[input]
+			if (val > 0) {
+				sum_of_logs += log(val)
+			}
+			if (val < 0) {
+				sum_of_logs += log(val)
+			}
 		}
 		geomean = exp(sum_of_logs / idx)
 		if (mean < 0) {
@@ -43,4 +58,5 @@ END {
 	print "Stddev: " stddev
 	print "Geomean: " geomean
 	print "NumInputs: " idx
+	print "Range: [" min ", " max "]"
 }

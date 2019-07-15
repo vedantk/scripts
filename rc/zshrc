@@ -114,6 +114,11 @@ avgcol() {
 	awk -f ~/scripts/avg.awk -v col=$1
 }
 
+# Create a histogram by sorting & uniq'ing the input.
+histo() {
+	sort | uniq -c | sort -k1 -n | awk 'BEGIN { idx = 0; total = 0; } { lines[idx] = $0; count[idx] = $1; total += $1; idx += 1; } END { for (i = 0; i < idx; i++) { printf("%.4f%% %s\n", 100*count[i]/total, lines[i]); } }'
+}
+
 # Display call trees for non-object allocations given a MSL-enabled memgraph. Usage: <memgraph> <class> <invert-flag-or-none>.
 msl_stacks() {
 	if [[ ! -e "$1" || -z "$2" ]]; then
