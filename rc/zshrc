@@ -88,7 +88,7 @@ configure_monorepo() {
   mkdir -p $build_dir || return
   cd $build_dir
   src_dir=$(srcs llvm)
-  llvm_cmake_configure="xcrun cmake -G Ninja $src_dir -DCLANG_ENABLE_ARCMT=Off -DCLANG_ENABLE_STATIC_ANALYZER=Off -DLLVM_ENABLE_PROJECTS='clang;libcxx;libcxxabi;compiler-rt;libunwind'"
+  llvm_cmake_configure="xcrun cmake -G Ninja $src_dir -DCLANG_ENABLE_ARCMT=Off -DCLANG_ENABLE_STATIC_ANALYZER=Off -DLLVM_ENABLE_PROJECTS='clang;libcxx;libcxxabi;compiler-rt;libunwind;lldb'"
   if [[ "$1" == "RA" ]]; then
      llvm_cmake_configure="$llvm_cmake_configure -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=On"
   elif [[ "$1" == "R" ]]; then
@@ -100,6 +100,7 @@ configure_monorepo() {
     rm -rf $build_dir
     return
   fi
+  echo ":: $llvm_cmake_configure"
   eval "$llvm_cmake_configure"
 }
 
@@ -116,7 +117,7 @@ avgcol() {
 
 # Create a histogram by sorting & uniq'ing the input.
 histo() {
-	sort | uniq -c | sort -k1 -n | awk 'BEGIN { idx = 0; total = 0; } { lines[idx] = $0; count[idx] = $1; total += $1; idx += 1; } END { for (i = 0; i < idx; i++) { printf("%.4f%% %s\n", 100*count[i]/total, lines[i]); } }'
+	sort | uniq -c | sort -k1 -n | awk 'BEGIN { idx = 0; total = 0; } { lines[idx] = $0; count[idx] = $1; total += $1; idx += 1; } END { cumul = 0; for (i = 0; i < idx; i++) { pctg = 100*count[i]/total; cumul += pctg; printf("%.2f%%\t%.2f%%\t%s\n", cumul, pctg, lines[i]); } }'
 }
 
 # Display call trees for non-object allocations given a MSL-enabled memgraph. Usage: <memgraph> <class> <invert-flag-or-none>.
