@@ -202,5 +202,6 @@ match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
 set nobackup
 set noswapfile
 
-"Set up building with ninja.
-set makeprg=ninja
+"Fix bulleted list formatting within comments.
+:set formatoptions+=n
+:set formatlistpat=^\\s*\\w\\+[.\)]\\s\\+\\\\|^\\s*[\\-\\+\\*]\\+\\s\\+
