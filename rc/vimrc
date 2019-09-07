@@ -10,6 +10,7 @@ Plug 'ervandew/supertab'
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/seoul256.vim'
+Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' }
 Plug 'rhysd/vim-llvm'
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'tpope/vim-fugitive'
@@ -22,6 +23,9 @@ call plug#end()
 noremap  <F10> :NERDTreeToggle<CR>
 inoremap <F10> <ESC>:NERDTreeToggle<CR>
 let NERDTreeIgnore=['\~$', '.*\.pyc$', 'pip-log\.txt$', '.*.pid', '.*\.o$']
+
+noremap  <F8> :TagbarToggle<CR>
+inoremap <F8> <ESC>:TagbarToggle<CR>
 
 " [Buffers] Jump to the existing window if possible
 let g:fzf_buffers_jump = 1
