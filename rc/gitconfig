@@ -10,6 +10,7 @@
 	fmt = ! git diff -U0 --no-color HEAD^ | ~/src/llvm-project-master/clang/tools/clang-format/clang-format-diff.py -i -p1
 [merge]
 	conflictstyle = diff3
+	tool = vimdiff
 [push]
 	default = simple
 [color]
@@ -17,3 +18,7 @@
 [log]
 	decorate = true
 	date = local
+[diff]
+	tool = vimdiff
+	algorithm = patience
+	context = 5

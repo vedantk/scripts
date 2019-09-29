@@ -40,7 +40,10 @@ imap <c-p> <plug>(fzf-complete-file)
 " let g:c_syntax_for_h = 1
 
 let delimitMate_expand_cr = 1
+
+" Teach a.vim about llvm project layout.
 let g:alternateSearchPath = 'reg:|source|include/lldb|g,reg:|include/lldb|source|g,reg:|include/swift|lib|g,reg:|lib|include/swift|g,reg:|include/clang|lib|g,reg:|lib|include/clang|g,reg:|include/llvm|lib|g,reg:|lib|include/llvm|g'
+
 let g:swift_suppress_showmatch_warning = 1
 
 "Basic options.
@@ -171,7 +174,7 @@ if bufwinnr(1)
 endif
 
 "Recursively search upwards for a tagfile.
-set tags+=./tags;/
+set tags^=./.git/tags;
 
 "Open the current tag in a new tab, or a vertical split.
 map <C-\> ;tab split<CR>;exec("tag ".expand("<cword>"))<CR>
