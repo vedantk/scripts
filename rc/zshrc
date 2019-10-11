@@ -88,7 +88,7 @@ configure_monorepo() {
   mkdir -p $build_dir || return
   cd $build_dir
   src_dir=$(srcs llvm)
-  llvm_cmake_configure="xcrun cmake -G Ninja -DCMAKE_C_COMPILER_LAUNCHER=$(xcrun --find fastcc) -DCMAKE_CXX_COMPILER_LAUNCHER=$(xcrun --find fastc++) $src_dir -DCLANG_ENABLE_ARCMT=Off -DCLANG_ENABLE_STATIC_ANALYZER=Off -DLLVM_ENABLE_PROJECTS='clang;clang-tools-extra;libcxx;libcxxabi;compiler-rt;libunwind;lldb' -DLLDB_USE_SYSTEM_DEBUGSERVER=On -DCOMPILER_RT_ENABLE_IOS=1 -DCOMPILER_RT_ENABLE_WATCHOS=0 -DCOMPILER_RT_ENABLE_TVOS=0"
+  llvm_cmake_configure="xcrun cmake -G Ninja -DCMAKE_MAKE_PROGRAM=$(xcrun -f ninja) -DCMAKE_C_COMPILER_LAUNCHER=$(xcrun --find fastcc) -DCMAKE_CXX_COMPILER_LAUNCHER=$(xcrun --find fastc++) $src_dir -DCLANG_ENABLE_ARCMT=Off -DCLANG_ENABLE_STATIC_ANALYZER=Off -DLLVM_ENABLE_PROJECTS='clang;clang-tools-extra;libcxx;libcxxabi;compiler-rt;libunwind;lldb' -DLLDB_USE_SYSTEM_DEBUGSERVER=On -DCOMPILER_RT_ENABLE_IOS=1 -DCOMPILER_RT_ENABLE_WATCHOS=0 -DCOMPILER_RT_ENABLE_TVOS=0"
   if [[ "$1" == "RA" ]]; then
      llvm_cmake_configure="$llvm_cmake_configure -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=On"
   elif [[ "$1" == "R" ]]; then
@@ -156,7 +156,8 @@ export EDITOR=vim
 export EMAIL=vsk@apple.com
 export REPLYTO=$EMAIL
 
-export PATH=/Applications/OSEng.app/Contents/Developer/usr/local/bin/:$PATH
+export PATH=$(xcode-select -p)/usr/local/bin/:$PATH
 export PATH=~/scripts:$PATH
 export PATH=~/src/llvm-project-master/llvm/utils/git-svn/:$PATH
 export PATH=/Users/vsk/.vim/plugged/fzf/bin/:$PATH
+export PATH="/usr/local/opt/swig@3/bin:$PATH"
