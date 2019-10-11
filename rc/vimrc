@@ -85,7 +85,7 @@ syntax on
 let g:lisp_rainbow = 1
 
 set background=light
-colorscheme seoul256-light
+colorscheme seoul256
 
 "Set language-specific indentation preferences.
 set shiftround
@@ -102,8 +102,8 @@ augroup END
 
 autocmd FileType llvm setlocal colorcolumn=80
 autocmd FileType text setlocal textwidth=80 colorcolumn=80
-"autocmd FileType c setlocal cindent tabstop=8 colorcolumn=80 tabstop=8 softtabstop=8 autoindent noexpandtab shiftwidth=8
-autocmd FileType c setlocal cindent expandtab shiftwidth=2 tabstop=2 softtabstop=2 colorcolumn=80
+autocmd FileType c setlocal cindent tabstop=8 colorcolumn=80 tabstop=8 softtabstop=8 autoindent noexpandtab shiftwidth=8
+"autocmd FileType c setlocal cindent expandtab shiftwidth=2 tabstop=2 softtabstop=2 colorcolumn=80
 autocmd FileType cpp setlocal cindent expandtab shiftwidth=2 tabstop=2 softtabstop=2 colorcolumn=80
 autocmd FileType objc setlocal cindent expandtab shiftwidth=2 tabstop=2 softtabstop=2 colorcolumn=80
 autocmd FileType cmake setlocal cindent expandtab shiftwidth=2 tabstop=2 softtabstop=2 colorcolumn=80
