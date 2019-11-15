@@ -43,10 +43,14 @@ alias gco='git checkout'
 alias gcp='git cherry-pick'
 alias squash='git commit --amend -C @'
 alias gg='git grep'
+alias gdesc='git log --format=%B -n 1'
 
 # AWS.
 alias aws='/Users/vsk/Library/Python/2.7/bin/aws'
 alias blobby='aws --endpoint-url https://blob.mr3.simcloud.apple.com --cli-read-timeout 300'
+
+# LLDB.
+alias lldb='lldb --capture'
 
 # Grab the first column of the input, using ":" as the column separator.
 alias fst='cut -d":" -f1 | uniq | grep -vE "\.pyc$|Binary "'
