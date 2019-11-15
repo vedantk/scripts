@@ -1,7 +1,7 @@
 #!/bin/bash -x
 
-CXX=/Users/vsk/src/builds/hot-cold-splitting-RA/bin/clang
-CFLAGS="-w -Wno-error -Os -I /usr/local/include/csmith-2.3.0 -isysroot /Applications/LatestEverglades.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk"
+CXX=/Users/vsk/src/builds/llvm-project-master-RA/bin/clang
+CFLAGS="-w -Wno-error -O2 -g -glldb -Xclang -femit-debug-entry-values -I $(echo /usr/local/include/csmith-*) -isysroot $(xcrun -sdk macosx -show-sdk-path)"
 
 while [ 1 ]; do
 	csmith -o test.c --concise --no-inline-function --quiet || exit 1
