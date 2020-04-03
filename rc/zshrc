@@ -38,19 +38,17 @@ alias sl='ls'
 
 # Git.
 alias g='git'
-alias gst='git status'
+alias gst='git status -uno'
 alias gco='git checkout'
 alias gcp='git cherry-pick'
 alias squash='git commit --amend -C @'
 alias gg='git grep'
 alias gdesc='git log --format=%B -n 1'
+alias gfiles='git show --name-only --pretty=format: HEAD'
 
 # AWS.
 alias aws='/Users/vsk/Library/Python/2.7/bin/aws'
 alias blobby='aws --endpoint-url https://blob.mr3.simcloud.apple.com --cli-read-timeout 300'
-
-# LLDB.
-alias lldb='lldb --capture'
 
 # Grab the first column of the input, using ":" as the column separator.
 alias fst='cut -d":" -f1 | uniq | grep -vE "\.pyc$|Binary "'
@@ -79,7 +77,7 @@ cdb() {
 # Optionally drill down into a source subdirectory specified in $1.
 srcs() {
   build_dir=$(pwd | grep -Eo "$HOME/src/builds/[^/]+")
-  src_label=$(basename $build_dir | sed -E 's/-(R|D)A?//g' | sed -E 's/-(SAN|stage2|all)//g')
+  src_label=$(basename $build_dir | sed -E 's/-(R|D)A?(mod)?//g' | sed -E 's/-(SAN|stage2|all)//g')
   src_dir="$HOME/src/$src_label"
   echo "$src_dir/$1"
 }
@@ -92,13 +90,17 @@ configure_monorepo() {
   mkdir -p $build_dir || return
   cd $build_dir
   src_dir=$(srcs llvm)
-  llvm_cmake_configure="xcrun cmake -G Ninja -DCMAKE_MAKE_PROGRAM=$(xcrun -f ninja) -DCMAKE_C_COMPILER_LAUNCHER=$(xcrun --find fastcc) -DCMAKE_CXX_COMPILER_LAUNCHER=$(xcrun --find fastc++) $src_dir -DCLANG_ENABLE_ARCMT=Off -DCLANG_ENABLE_STATIC_ANALYZER=Off -DLLVM_ENABLE_PROJECTS='clang;clang-tools-extra;libcxx;libcxxabi;compiler-rt;libunwind;lldb' -DLLDB_USE_SYSTEM_DEBUGSERVER=On -DCOMPILER_RT_ENABLE_IOS=1 -DCOMPILER_RT_ENABLE_WATCHOS=0 -DCOMPILER_RT_ENABLE_TVOS=0"
+  llvm_cmake_configure="xcrun cmake -G Ninja -DCMAKE_MAKE_PROGRAM=$(xcrun -f ninja) -DCMAKE_C_COMPILER_LAUNCHER=$(xcrun --find fastcc) -DCMAKE_CXX_COMPILER_LAUNCHER=$(xcrun --find fastc++) $src_dir -DCLANG_ENABLE_ARCMT=Off -DCLANG_ENABLE_STATIC_ANALYZER=Off -DLLVM_ENABLE_PROJECTS='clang;clang-tools-extra;lld;libcxx;libcxxabi;compiler-rt;libunwind;lldb' -DLLDB_USE_SYSTEM_DEBUGSERVER=On -DCOMPILER_RT_ENABLE_IOS=1 -DCOMPILER_RT_ENABLE_WATCHOS=0 -DCOMPILER_RT_ENABLE_TVOS=0 -DCLANG_APPLE_BUILD_VERSION_STRING=9010000"
   if [[ "$1" == "RA" ]]; then
-     llvm_cmake_configure="$llvm_cmake_configure -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=On"
+     llvm_cmake_configure="$llvm_cmake_configure -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLLVM_ENABLE_ASSERTIONS=On"
   elif [[ "$1" == "R" ]]; then
-     llvm_cmake_configure="$llvm_cmake_configure -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=Off"
+     llvm_cmake_configure="$llvm_cmake_configure -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLLVM_ENABLE_ASSERTIONS=Off"
   elif [[ "$1" == "D" ]]; then
      llvm_cmake_configure="$llvm_cmake_configure -DCMAKE_BUILD_TYPE=Debug -DLLVM_ENABLE_ASSERTIONS=On"
+  elif [[ "$1" == "RAmod" ]]; then
+     llvm_cmake_configure="$llvm_cmake_configure -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLLVM_ENABLE_ASSERTIONS=On -DLLVM_ENABLE_MODULES=On"
+  elif [[ "$1" == "SAN" ]]; then
+     llvm_cmake_configure="$llvm_cmake_configure -DCMAKE_BUILD_TYPE=Debug -DLLVM_ENABLE_ASSERTIONS=On -DLLVM_USE_SANITIZER='Address;Undefined'"
   else
     echo "Don't know how to configure $1."
     rm -rf $build_dir
@@ -138,8 +140,11 @@ msl_stacks() {
 # Pretty-print "squashed" JSON read from stdin. Removes Python `u` Unicode prefixes.
 ppjson() { python -c "import json, pprint; pprint.pprint(json.loads(raw_input()))" | sed -E "s/u'([^']*)'/ '\1'/g" }
 
-# Apple buildit.
-alias rcbuild='~rc/bin/buildit'
+# Disasm.
+alias dis="otool -tvV"
+
+# Byte size of a binary.
+function sizeof() { ls -la $1 | awk '{ print $5 }' }
 
 # Handling remote sessions.
 alias ssh="caffeinate ssh"
@@ -161,6 +166,7 @@ export EDITOR=vim
 export EMAIL=vsk@apple.com
 export REPLYTO=$EMAIL
 
+export PATH="$HOME/src/arcanist-depot/arcanist/bin:$PATH"
 export PATH=$(xcode-select -p)/usr/local/bin/:$PATH
 export PATH=~/scripts:$PATH
 export PATH=~/src/llvm-project-master/llvm/utils/git-svn/:$PATH
