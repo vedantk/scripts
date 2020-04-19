@@ -49,12 +49,12 @@ class LocStats:
                          stats['formal params entry value scope bytes covered'],
                     stats['formal params scope bytes total'])
             self.all_var_coverage = ratio(
-                    stats['vars scope bytes covered'],
-                    stats['vars scope bytes total'])
+                    stats['scope bytes covered'],
+                    stats['scope bytes total'])
             self.all_var_coverage_no_entryvals = ratio(
-                    stats['vars scope bytes covered'] - \
-                         stats['vars entry value scope bytes covered'],
-                    stats['vars scope bytes total'])
+                    stats['scope bytes covered'] - \
+                         stats['entry value scope bytes covered'],
+                    stats['scope bytes total'])
             self.ratio_params_90pluspct_covered = ratio(
                     stats['params with [90%,100%) of its scope covered'] + \
                          stats['params with 100% of its scope covered'],
