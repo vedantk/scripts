@@ -59,4 +59,24 @@ END {
 	print "Geomean: " geomean
 	print "NumInputs: " idx
 	print "Range: [" min ", " max "]"
+
+	num_less_than_mean = 0
+	num_less_than_sigma = 0
+	num_less_than_two_sigma = 0
+	num_less_than_three_sigma = 0
+	for (input in inputs) {
+		if (inputs[input] < mean)
+			num_less_than_mean += 1
+		if (inputs[input] < (mean + stddev))
+			num_less_than_sigma += 1
+		if (inputs[input] < (mean + (2 * stddev)))
+			num_less_than_two_sigma += 1
+		if (inputs[input] < (mean + (3 * stddev)))
+			num_less_than_three_sigma += 1
+	}
+
+	printf("%% < %f (mean): %.2f\n", mean, 100 * (num_less_than_mean / idx))
+	printf("%% < %f (1 sigma): %.2f\n", mean + stddev, 100 * (num_less_than_sigma / idx))
+	printf("%% < %f (2 sigma): %.2f\n", mean + (2 * stddev), 100 * (num_less_than_two_sigma / idx))
+	printf("%% < %f (3 sigma): %.2f\n", mean + (3 * stddev), 100 * (num_less_than_three_sigma / idx))
 }
