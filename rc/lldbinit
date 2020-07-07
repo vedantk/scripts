@@ -1,0 +1,3 @@
+command script import lldb.macosx.crashlog
+command script import ~/src/llvm-project-master/llvm/utils/lldbDataFormatters.py
+command script import ~/scripts/lldb.sh/lldbsh.py

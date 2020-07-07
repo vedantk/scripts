@@ -22,3 +22,6 @@
 [submodule "rc/vim/bundle/vim-gitgutter"]
 	path = rc/vim/bundle/vim-gitgutter
 	url = https://github.com/airblade/vim-gitgutter.git
+[submodule "lldb.sh"]
+	path = lldb.sh
+	url = https://github.com/ihnorton/lldb.sh.git
