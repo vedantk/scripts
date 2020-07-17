@@ -134,6 +134,9 @@ nnoremap <leader>y :call system('pbcopy', @0)<CR>
 "Copy to clipboard (remote).
 " nnoremap <leader>y :call system('nc localhost 8377', @0)<CR>
 
+"Copy the full filename to the system clipboard (local).
+nnoremap <leader>cl :call system('pbcopy', expand("%:p"))<CR>
+
 "Save a keystroke when entering command mode.
 noremap ; :
 noremap : ;

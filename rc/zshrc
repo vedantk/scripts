@@ -1,5 +1,5 @@
-PROMPT="===========================================================
-[%M] %10c (%?) $ "
+PROMPT="
+(%D{%r}) %F{green}%10c%f (%(?.%F{blue}.%F{red})%?%f) %# "
 
 setopt completealiases
 setopt append_history
@@ -46,6 +46,11 @@ alias gg='git grep'
 alias gdesc='git log --format=%B -n 1'
 alias gfiles='git show --name-only --pretty=format: HEAD'
 alias br='git branch'
+
+# List unmerged files.
+function gunmerged() {
+	git ls-files -u | awk '{ print $NF }' | uniq
+}
 
 # AWS.
 alias aws='/Users/vsk/Library/Python/2.7/bin/aws'
